@@ -1,4 +1,4 @@
-package com.bugwars.App.model;
+package com.bugwarsBackend.bugwars.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,7 +10,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long user_id;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -18,10 +18,9 @@ public class User {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
     private String password;
 }
-
