@@ -1,0 +1,57 @@
+# Default ignored files
+/shelf/
+/.idea/workspace.xml
+
+# Logs
+logs
+.log
+npm-debug.log
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node.js
+node_modules
+
+# Build artifacts
+dist
+dist-ssr
+coverage
+.local
+
+# Project-specific files
+ProjectNotes.excalidraw
+
+# Cypress
+/cypress/videos/
+/cypress/screenshots/
+
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea
+*.suo
+.ntvs
+*.njsproj
+*.sln
+*.sw?
+*.env
+
+# Documentation
+HELP.md
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!/src/main//target/
+!/src/test//target/
+
+# IntelliJ IDEA
+.idea
+*.iws
+*.iml
+*.ipr
+
+# Custom exclusions
+env.properties
