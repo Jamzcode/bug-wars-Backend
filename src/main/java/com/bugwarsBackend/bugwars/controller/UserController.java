@@ -5,6 +5,7 @@ import com.bugwarsBackend.bugwars.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
@@ -17,6 +18,11 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("")
+    public List<User> getAllUsers(){
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{user_id}")
