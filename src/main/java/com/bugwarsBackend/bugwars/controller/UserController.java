@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+
+import java.util.List;
+import java.util.Optional;
+
+@CrossOrigin
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -18,6 +23,11 @@ public class UserController {
         this.userService = userService;
     }
 
+
+    @GetMapping("/all")
+    public List<User> getAllUsers(){
+        return userService.getAllUsers();
+    }
     @GetMapping("/{user_id}")
     public Optional<User> getUserById(@PathVariable("user_id") long id) {
         return userService.getUserById(id);
