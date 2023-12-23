@@ -34,7 +34,7 @@ jobs:
           file: ./Dockerfile
           push: false
           tags: |
-            bug-wars-backend:4ddb217eb819c56b0260b09a17f560fca2bbd6e7e0290f67919c289cc67868c1 # Replace with your Docker image tag
+            bug-wars-backend:${{ secrets.DOCKER_IMAGE_TAG }} # Replace with your Docker image tag
 
       - name: Deploy to Render
         run: |
