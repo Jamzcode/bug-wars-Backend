@@ -12,11 +12,13 @@
         <module name="demo" />
 >>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
         <module name="bugwars" />
+        <module name="bug-wars-Backend" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="bug-wars-Backend" options="-parameters" />
       <module name="bugwars" options="-parameters" />
 <<<<<<< HEAD
 =======
