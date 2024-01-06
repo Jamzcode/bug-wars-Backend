@@ -47,6 +47,10 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
 	</dependencies>
 
 	<build>
@@ -63,6 +67,35 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.11</version>
+				<configuration>
+					<excludes>
+						<exclude>com/bugwarsBackend/bugwars/BugWarsApplication.*</exclude>
+						<!-- <exclude>net/crusadergames/bugwars/security/**/*</exclude> -->
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate-code-coverage-report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
 </project>
