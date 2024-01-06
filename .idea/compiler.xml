@@ -7,6 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+<<<<<<< HEAD
+=======
+        <module name="demo" />
+>>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
         <module name="bugwars" />
         <module name="bug-wars-Backend" />
       </profile>
@@ -16,6 +20,10 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="bug-wars-Backend" options="-parameters" />
       <module name="bugwars" options="-parameters" />
+<<<<<<< HEAD
+=======
+      <module name="demo" options="-parameters" />
+>>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
     </option>
   </component>
 </project>

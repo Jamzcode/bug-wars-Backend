@@ -7,6 +7,10 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+<<<<<<< HEAD
+=======
+    <option name="workspaceImportForciblyTurnedOn" value="true" />
+>>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="temurin-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
