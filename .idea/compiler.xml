@@ -8,11 +8,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="bugwars" />
+        <module name="bug-wars-Backend" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="bug-wars-Backend" options="-parameters" />
       <module name="bugwars" options="-parameters" />
     </option>
   </component>
