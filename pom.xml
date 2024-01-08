@@ -47,7 +47,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-<<<<<<< HEAD
+<!--<<<<<<< HEAD-->
 =======
 
 >>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
@@ -73,7 +73,7 @@
 				<version>0.8.11</version>
 				<configuration>
 					<excludes>
-<<<<<<< HEAD
+<!--<<<<<<< HEAD-->
 						<exclude>net/crusadergames/bugwars/BugWarsApplication.*</exclude>
 						<exclude>net/crusadergames/bugwars/security/**/*</exclude>
 =======
@@ -99,11 +99,11 @@
 			</plugin>
 		</plugins>
 	</build>
-<<<<<<< HEAD
+<!--<<<<<<< HEAD-->
 
 
 =======
-<<<<<<< HEAD
+<!--<<<<<<< HEAD-->
 =======
 
 >>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
