@@ -1,5 +1,6 @@
 package com.bugwarsBackend.bugwars.security.service;
 
+import com.bugwarsBackend.bugwars.exception.TokenRefreshException;
 import com.bugwarsBackend.bugwars.model.RefreshToken;
 import com.bugwarsBackend.bugwars.model.User;
 import com.bugwarsBackend.bugwars.repository.RefreshTokenRepository;
