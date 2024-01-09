@@ -1,2 +1,3 @@
-INSERT INTO users (first_name, last_name, username, password)
-VALUES ('Reiczel', 'Bael', 'zelbael', 'password');
+INSERT INTO roles (name)
+VALUES ('ROLE_ADMIN'), ('ROLE_USER')
+ON CONFLICT (name) DO NOTHING;
