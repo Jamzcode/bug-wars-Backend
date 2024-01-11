@@ -1,12 +1,13 @@
 package com.bugwarsBackend.bugwars.repository;
 
+import com.bugwarsBackend.bugwars.model.ERole;
+import com.bugwarsBackend.bugwars.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.management.relation.Role;
 import java.util.Optional;
 
 @Repository
-public interface RoleRepository<ERole> extends JpaRepository<Role, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> findByName(ERole name);
 }
