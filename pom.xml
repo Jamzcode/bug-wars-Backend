@@ -15,6 +15,8 @@
 	<description>Bug Wars Backend</description>
 	<properties>
 		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -47,10 +49,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-<!--<<<<<<< HEAD-->
-=======
-
->>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
 	</dependencies>
 
 	<build>
@@ -73,13 +71,10 @@
 				<version>0.8.11</version>
 				<configuration>
 					<excludes>
-<!--<<<<<<< HEAD-->
 						<exclude>net/crusadergames/bugwars/BugWarsApplication.*</exclude>
 						<exclude>net/crusadergames/bugwars/security/**/*</exclude>
-=======
 						<exclude>com/bugwarsBackend/bugwars/BugWarsApplication.*</exclude>
 						<!-- <exclude>net/crusadergames/bugwars/security/**/*</exclude> -->
->>>>>>> dev
 					</excludes>
 				</configuration>
 				<executions>
@@ -99,13 +94,4 @@
 			</plugin>
 		</plugins>
 	</build>
-<!--<<<<<<< HEAD-->
-
-
-=======
-<!--<<<<<<< HEAD-->
-=======
-
->>>>>>> 797f2edcf3d72e8de13e8cdb00dcd12efc621b7e
->>>>>>> dev
 </project>

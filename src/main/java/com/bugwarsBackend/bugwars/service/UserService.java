@@ -17,11 +17,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void saveUser(String firstName, String lastName, String username, String password) {
+    public void saveUser(String firstName, String lastName, String username, String email, String password) {
         User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setUsername(username);
+        user.setEmail(email);
         user.setPassword(password);
 
         userRepository.save(user);
@@ -48,6 +49,7 @@ public class UserService {
             existingUser.setFirstName(updatedUser.getFirstName());
             existingUser.setLastName(updatedUser.getLastName());
             existingUser.setUsername(updatedUser.getUsername());
+            existingUser.setEmail((updatedUser.getEmail()));
             existingUser.setPassword(updatedUser.getPassword());
             // Save the updated user
             return userRepository.save(existingUser);
