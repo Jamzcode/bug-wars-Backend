@@ -106,7 +106,7 @@
 				<version>0.8.11</version>
 				<configuration>
 					<excludes>
-						<exclude>net/crusadergames/bugwars/BugWarsApplication.*</exclude>
+						<exclude>com/bugwarsBackend/bugwars/BugWarsApplication.*</exclude>
 						<exclude>net/crusadergames/bugwars/security/**/*</exclude>
 					</excludes>
 				</configuration>
