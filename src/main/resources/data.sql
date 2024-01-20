@@ -20,4 +20,8 @@ ON CONFLICT (user_id, role_id) DO NOTHING;
 --INSERT INTO scripts (user_id, name, raw, bytecode, is_bytecode_valid)
 --VALUES
 --    ((SELECT id FROM users WHERE username = 'spider_bug'), 'Venom Strike', ':START att isPoison inject',
+<<<<<<< HEAD
 --    '3a 53 54 41 52 54 20 61 74 74 20 69 73 46 6f 6f 64 20 65 62 72', true);
+=======
+--    '3a 53 54 41 52 54 20 61 74 74 20 69 73 46 6f 6f 64 20 65 62 72', true);
+>>>>>>> 4cd38007c9bf72b0f9c322b4146424ab3c3f4ba2

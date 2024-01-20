@@ -29,8 +29,8 @@ public class UserControllerTests {
     public void getAllUsers_ReturnsListOfUsers() throws Exception {
         // mocking the behavior of the userService
         when(userService.getAllUsers()).thenReturn(List.of(
-                new User(1L, "John", "Doe", "john.doe", "password123"),
-                new User(2L, "Jane", "Doe", "jane.doe", "password456")
+                new User("john.doe", "john.doe@test.com","password123"),
+                new User("jane.doe", "jane.doe@test.com","password456")
         ));
 
         // performing a GET request and verifying the response
@@ -45,7 +45,7 @@ public class UserControllerTests {
     @Test
     public void getUserById_UserExists_ReturnsUser() throws Exception {
         // mocking the behavior of the userService
-        when(userService.getUserById(1L)).thenReturn(Optional.of(new User(3L, "John", "Doe", "john.doe", "password123")));
+        when(userService.getUserById(1L)).thenReturn(Optional.of(new User("john.doe", "john.doe@test.com","password123")));
 
         // performing a GET request and verifying the response
         mockMvc.perform(get("/users/1"))
