@@ -17,12 +17,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-<<<<<<< HEAD
-    public void saveUser(String username, String password) {
-=======
     public void saveUser(String firstName, String lastName, String username, String email, String password) {
->>>>>>> e2a7df40852fad53e3b6267d7d41d41aeb3780a0
         User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(password);
@@ -48,6 +46,8 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
             // Update user properties
+            existingUser.setFirstName(updatedUser.getFirstName());
+            existingUser.setLastName(updatedUser.getLastName());
             existingUser.setUsername(updatedUser.getUsername());
             existingUser.setEmail((updatedUser.getEmail()));
             existingUser.setPassword(updatedUser.getPassword());
