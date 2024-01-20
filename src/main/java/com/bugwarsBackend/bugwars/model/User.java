@@ -3,7 +3,6 @@ package com.bugwarsBackend.bugwars.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-<<<<<<< HEAD
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,17 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-=======
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Data
->>>>>>> e2a7df40852fad53e3b6267d7d41d41aeb3780a0
 @Entity
 @Table(name = "users",
         uniqueConstraints = {
@@ -33,10 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-<<<<<<< HEAD
     @JsonIgnore
-=======
->>>>>>> e2a7df40852fad53e3b6267d7d41d41aeb3780a0
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,7 +30,6 @@ public class User {
     @Size(min = 3, max = 50)
     private String username;
 
-<<<<<<< HEAD
     @NotBlank
     @Size(max = 50)
     @Email
@@ -54,12 +38,6 @@ public class User {
     @NotBlank
     @Size(max = 120)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-=======
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
->>>>>>> e2a7df40852fad53e3b6267d7d41d41aeb3780a0
     private String password;
 
     @ToString.Exclude

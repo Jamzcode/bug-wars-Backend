@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 INSERT INTO roles (name)
 VALUES ('ROLE_ADMIN'), ('ROLE_USER')
 ON CONFLICT (name) DO NOTHING;
@@ -22,7 +21,3 @@ ON CONFLICT (user_id, role_id) DO NOTHING;
 --VALUES
 --    ((SELECT id FROM users WHERE username = 'spider_bug'), 'Venom Strike', ':START att isPoison inject',
 --    '3a 53 54 41 52 54 20 61 74 74 20 69 73 46 6f 6f 64 20 65 62 72', true);
-=======
-INSERT INTO users (first_name, last_name, username, email, password)
-VALUES ('Reiczel', 'Bael', 'zelbael', 'test@test.com', 'password');
->>>>>>> e2a7df40852fad53e3b6267d7d41d41aeb3780a0
