@@ -11,5 +11,7 @@ import java.util.List;
 public interface ScriptRepository extends JpaRepository<Script, Long> {
     List<Script> getScriptsByUser(User user);
 
+    List<Script> isBytecodeValid();
+
     Boolean scriptNameExists(String name);
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,14 @@ public class ScriptService {
     @Autowired
     UserRepository userRepository;
 
-    public Script getScript(long id, Principal principal) {
+    public List<Script> getAllScripts() {
+        return scriptRepository.isBytecodeValid();
+
+
+
+    }
+
+    public Script getScript(Long id, Principal principal) {
         User user = getUser(principal);
 
         Optional<Script> scriptOptional = scriptRepository.findById(id);
@@ -59,7 +67,7 @@ public class ScriptService {
 
     }
 
-    public void deleteScriptById(long id, Principal principal) {
+    public void deleteScriptById(Long id, Principal principal) {
         User user = getUser(principal);
         Optional<Script> scriptOptional = scriptRepository.findById(id);
 
