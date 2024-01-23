@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ScriptRepository extends JpaRepository<Script, Long> {
-    List<Script> findScriptByUser(User user);
+    List<Script> getScriptsByUser(User user);
 
-    Boolean scriptExists(String name);
+    Boolean scriptNameExists(String name);
 }

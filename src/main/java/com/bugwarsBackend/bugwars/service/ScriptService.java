@@ -1,5 +1,6 @@
 package com.bugwarsBackend.bugwars.service;
 
+import com.bugwarsBackend.bugwars.dto.request.ScriptRequest;
 import com.bugwarsBackend.bugwars.model.Script;
 import com.bugwarsBackend.bugwars.model.User;
 import com.bugwarsBackend.bugwars.repository.ScriptRepository;
@@ -39,7 +40,38 @@ public class ScriptService {
     public List<Script> getUserScripts(Principal principal) {
         User user = getUser(principal);
 
-        return scriptRepository.findScriptByUser(user);
+        return scriptRepository.getScriptsByUser(user);
+    }
+
+    public Script createScript(ScriptRequest request, Principal principal) {
+        Script script = new Script();
+        User user = getUser(principal);
+
+        if (scriptRepository.scriptNameExists(request.getName())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Script name already exists");
+        }
+
+        //add script fields here
+
+    }
+
+    public Script updateScript() {
+
+    }
+
+    public void deleteScriptById(long id, Principal principal) {
+        User user = getUser(principal);
+        Optional<Script> scriptOptional = scriptRepository.findById(id);
+
+        if (scriptOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Script does not exist");
+        }
+
+        if (!user.getId().equals(scriptOptional.get().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unable to delete this script. You must be the owner of this script to delete it");
+        }
+
+        scriptRepository.deleteById(id);
     }
 
 
@@ -52,6 +84,8 @@ public class ScriptService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User does not exist.");
         }
     }
+
+
 
 
 }
