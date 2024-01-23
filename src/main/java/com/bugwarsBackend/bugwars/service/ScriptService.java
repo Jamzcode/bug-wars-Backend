@@ -21,7 +21,22 @@ public class ScriptService {
     @Autowired
     UserRepository userRepository;
 
-    public List<Script> getScriptByUser(Principal principal) {
+    public Script getScript(long id, Principal principal) {
+        User user = getUser(principal);
+
+        Optional<Script> scriptOptional = scriptRepository.findById(id);
+
+        if(scriptOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Script does not exist");
+        } else if (!user.getId().equals(scriptOptional.get().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You must be the owner of this script to access it");
+        } else {
+            return scriptOptional.get();
+        }
+
+    }
+
+    public List<Script> getUserScripts(Principal principal) {
         User user = getUser(principal);
 
         return scriptRepository.findScriptByUser(user);
