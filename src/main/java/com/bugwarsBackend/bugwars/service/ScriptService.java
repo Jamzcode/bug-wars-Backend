@@ -24,13 +24,20 @@ public class ScriptService {
     UserRepository userRepository;
 
     public List<Script> getAllScripts() {
+        //not done
         return scriptRepository.isBytecodeValid();
 
 
 
     }
 
-    public Script getScript(Long id, Principal principal) {
+    public List<Script> getUserScripts(Principal principal) {
+        User user = getUser(principal);
+
+        return scriptRepository.getScriptsByUser(user);
+    }
+
+    public Script getScriptById(Long id, Principal principal) {
         User user = getUser(principal);
 
         Optional<Script> scriptOptional = scriptRepository.findById(id);
@@ -45,13 +52,10 @@ public class ScriptService {
 
     }
 
-    public List<Script> getUserScripts(Principal principal) {
-        User user = getUser(principal);
 
-        return scriptRepository.getScriptsByUser(user);
-    }
 
     public Script createScript(ScriptRequest request, Principal principal) {
+        //Not done
         Script script = new Script();
         User user = getUser(principal);
 
@@ -61,10 +65,15 @@ public class ScriptService {
 
         //add script fields here
 
+
+        return script;
     }
 
-    public Script updateScript() {
+    public Script updateScript(Long id, ScriptRequest request, Principal principal) {
+        //Not done
+        Script script = new Script();
 
+        return script;
     }
 
     public void deleteScriptById(Long id, Principal principal) {
