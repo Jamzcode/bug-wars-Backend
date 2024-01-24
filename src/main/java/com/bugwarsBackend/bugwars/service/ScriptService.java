@@ -63,7 +63,7 @@ public class ScriptService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Script name already exists");
         }
 
-        //add script fields here
+        //map script fields here
 
 
         return script;
@@ -72,6 +72,9 @@ public class ScriptService {
     public Script updateScript(Long id, ScriptRequest request, Principal principal) {
         //Not done
         Script script = new Script();
+
+        //map script fields here
+
 
         return script;
     }
