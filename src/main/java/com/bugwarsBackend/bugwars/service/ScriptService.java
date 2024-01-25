@@ -1,6 +1,7 @@
 package com.bugwarsBackend.bugwars.service;
 
 import com.bugwarsBackend.bugwars.dto.request.ScriptRequest;
+import com.bugwarsBackend.bugwars.dto.response.ScriptName;
 import com.bugwarsBackend.bugwars.model.Script;
 import com.bugwarsBackend.bugwars.model.User;
 import com.bugwarsBackend.bugwars.repository.ScriptRepository;
@@ -17,18 +18,17 @@ import java.util.Optional;
 
 @Service
 public class ScriptService {
+
     @Autowired
-   ScriptRepository scriptRepository;
+    ScriptRepository scriptRepository;
 
     @Autowired
     UserRepository userRepository;
 
-    public List<Script> getAllScripts() {
-        //not done
-        return scriptRepository.isBytecodeValid();
 
 
-
+    public List<ScriptName> getAllValidScripts() {
+        return scriptRepository.getAllValidScripts();
     }
 
     public List<Script> getUserScripts(Principal principal) {
@@ -63,20 +63,48 @@ public class ScriptService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Script name already exists");
         }
 
+        //TODO implement logic to set isBytecodeValid to true once input has been parsed
+
+
+
         //map script fields here
+        script.setName(request.getName());
+        script.setRaw(request.getRaw());
+
+        //TODO find way to set byte code
+        //script.setBytecode(request.get());
+        script.setUser(user);
 
 
-        return script;
+        return scriptRepository.save(script);
     }
 
     public Script updateScript(Long id, ScriptRequest request, Principal principal) {
         //Not done
-        Script script = new Script();
+        User user = getUser(principal);
+        Optional<Script> scriptOptional = scriptRepository.findById(id);
+        Script updatedScript;
+
+        if(scriptOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Script does not exist");
+        } else if (!user.getId().equals(scriptOptional.get().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You must be the owner of this script to access it");
+        } else {
+            updatedScript = scriptOptional.get();
+        }
+
+        //TODO implement logic to set isBytecodeValid to true once input has been parsed
+
+
 
         //map script fields here
+        updatedScript.setName(request.getName());
+        updatedScript.setRaw(request.getRaw());
 
+        //TODO find way to set byte code
+        //script.setBytecode(request.get());
 
-        return script;
+        return scriptRepository.save(updatedScript);
     }
 
     public void deleteScriptById(Long id, Principal principal) {

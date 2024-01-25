@@ -1,6 +1,7 @@
 package com.bugwarsBackend.bugwars.controller;
 
 import com.bugwarsBackend.bugwars.dto.request.ScriptRequest;
+import com.bugwarsBackend.bugwars.dto.response.ScriptName;
 import com.bugwarsBackend.bugwars.model.Script;
 import com.bugwarsBackend.bugwars.service.ScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class ScriptController {
     ScriptService scriptService;
 
     @GetMapping("/all")
-    public List<Script> getAllScripts() {
-        return scriptService.getAllScripts();
+    public List<ScriptName> getAllValidScripts() {
+        return scriptService.getAllValidScripts();
     }
 
     @GetMapping
