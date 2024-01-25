@@ -59,7 +59,7 @@ public class ScriptService {
         Script script = new Script();
         User user = getUser(principal);
 
-        if (scriptRepository.scriptNameExists(request.getName())) {
+        if (scriptRepository.existsByName(request.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Script name already exists");
         }
 

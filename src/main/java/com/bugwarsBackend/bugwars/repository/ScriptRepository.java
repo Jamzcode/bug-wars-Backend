@@ -16,5 +16,5 @@ public interface ScriptRepository extends JpaRepository<Script, Long> {
     @Query("SELECT new com.bugwarsBackend.bugwars.dto.response.ScriptName(s.id, s.name) FROM Script s WHERE s.isBytecodeValid = true")
     List<ScriptName> getAllValidScripts();
 
-    Boolean scriptNameExists(String name);
+    Boolean existsByName(String name);
 }
