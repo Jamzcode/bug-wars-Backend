@@ -20,4 +20,3 @@ VALUES
     '[33, 5, 0, 35, 0, 12, 35, 0]', true),
      ((SELECT id FROM users WHERE username = 'spider_bug'), 'Spider Strike', 'Script 3',
      '[13, 13, 32, 9, 10, 11, 12, 35, 9, 14, 11, 11, 35, 0]', true);
-
