@@ -43,4 +43,5 @@ public class Script {
     @Column(name = "is_bytecode_valid")
     private boolean isBytecodeValid;
 
+
 }
