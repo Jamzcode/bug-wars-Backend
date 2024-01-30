@@ -17,16 +17,17 @@ public class BugParser {
         this.controls = controls;
     }
     /*
-        given assembly code from user (userInput), processes each line,
-        returns list of integers representing bytecode;
-        checks for missing position ? in code. for ex. in [10, 25, ?, 4] <-- ? is missing label (helper method)
-        checks for empty labels (helper method)
-        checks for infinite loops (helper method)
+
+    given assembly code from user (userInput), processes each line,
+    returns list of integers representing bytecode;
+    checks for missing position ? in code. for ex. in [10, 25, ?, 4] <-- ? is missing label (helper method)
+    checks for empty labels (helper method)
+    checks for infinite loops (helper method)
      */
     public List<Integer> parse(String userInput) throws BugParserException {
         String[] lines = userInput.split("\\R");
         for (int i = 0; i < lines.length; i++) {
-
+            //parseLine(line);
         }
         return bytecode;
     }
@@ -34,13 +35,29 @@ public class BugParser {
     /*
         parses each line,
         identifies each type of command - label, commands, control & processes it
+        if the first token is a control, then it should have a label
+        if the first token in this array is an action, then that should be only thing on the line
      */
     public void parseLine(String line) throws BugParserException {
+        removeComments(line);
+        String [] tokens = removeTokens(line);
 
+        if(tokens.length > 0) {
+            if (tokens[0].equals(":")) {
+                parseLabel(tokens);
+            } else {
+                processCommand(tokens);
+            }
+        }
     }
 
+    /*
+        check if this label has
+     */
     public void validateLabels(String label) throws BugParserException {
-
+        if(label.isEmpty()) {
+            throw new BugParserException("Empty label found");
+        }
     }
 
     /*
@@ -58,7 +75,6 @@ public class BugParser {
       handles label placeholders
      */
     public void parseLabel(String [] tokens) {
-
     }
 
     /*
@@ -83,5 +99,13 @@ public class BugParser {
     public Integer getMissingPosition(String target) {
 
         return null;
+    }
+
+    /*
+        add logic to process other commands here
+        for ex., convert commands to bytecode
+     */
+    public void processCommand(String[] tokens) {
+
     }
 }
