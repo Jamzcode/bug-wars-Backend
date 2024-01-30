@@ -21,3 +21,8 @@ ON CONFLICT (user_id, role_id) DO NOTHING;
 --VALUES
 --    ((SELECT id FROM users WHERE username = 'spider_bug'), 'Venom Strike', ':START att isPoison inject',
 --    '3a 53 54 41 52 54 20 61 74 74 20 69 73 46 6f 6f 64 20 65 62 72', true);
+<<<<<<< Updated upstream
+=======
+--    '3a 53 54 41 52 54 20 61 74 74 20 69 73 46 6f 6f 64 20 65 62 72', true);
+
+>>>>>>> Stashed changes
