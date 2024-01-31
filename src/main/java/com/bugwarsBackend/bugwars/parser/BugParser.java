@@ -1,8 +1,6 @@
 package com.bugwarsBackend.bugwars.parser;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 
 public class BugParser {
@@ -17,7 +15,6 @@ public class BugParser {
         this.controls = controls;
     }
     /*
-
     given assembly code from user (userInput), processes each line,
     returns list of integers representing bytecode;
     checks for missing position ? in code. for ex. in [10, 25, ?, 4] <-- ? is missing label (helper method)
@@ -27,24 +24,30 @@ public class BugParser {
     public List<Integer> parse(String userInput) throws BugParserException {
         String[] lines = userInput.split("\\R");
         for (int i = 0; i < lines.length; i++) {
-            //parseLine(line);
+            parseLine(lines[i], i + 1);
         }
+
+//        checkForMissingDestinations();
+//        fixDanglingLabelDefinition();
+//        checkforInfiniteLoop();
         return bytecode;
     }
 
     /*
-        parses each line,
-        identifies each type of command - label, commands, control & processes it
-        if the first token is a control, then it should have a label
-        if the first token in this array is an action, then that should be only thing on the line
+        method purpose: process line of Bug assembly code
+        checks if there is a comment, then removes comment
+        splits line into an array of tokens
+        if token has a ":", then it is a LABEL
+        --> if true, call parseLabel method to handle label parsing
+        --> if false, assumes line is a regular command, calls processCommand to handle command parsing
      */
-    public void parseLine(String line) throws BugParserException {
+    private void parseLine(String line, int lineNumber) throws BugParserException {
         removeComments(line);
         String [] tokens = removeTokens(line);
 
         if(tokens.length > 0) {
             if (tokens[0].equals(":")) {
-                parseLabel(tokens);
+                parseLabel(tokens, lineNumber);
             } else {
                 processCommand(tokens);
             }
@@ -52,21 +55,37 @@ public class BugParser {
     }
 
     /*
-        check if this label has
+        method iterates through each character in 'label' string
+        for each character, checks if it's a valid label character:
+            1. char is uppercase (A-Z)
+            2. char is a digit (0-9)
+            3. char is an underscore (_)
      */
-    public void validateLabels(String label) throws BugParserException {
+    private void validateLabels(String label, int lineNumber) throws BugParserException {
+        for (int i = 0; i < label.length(); i++) {
+            char c = label.charAt(i);
+            if (!Character.isUpperCase(c) && !Character.isDigit(c) && c != '_') {
+                throw new BugParserException(String.format("Invalid label name on line %d: %s", lineNumber, label));
+            }
+        }
         if(label.isEmpty()) {
             throw new BugParserException("Empty label found");
         }
     }
 
     /*
-        must remove tokens (which are commands, conditionals)
-        from bug assembly code
-        and remove comments
+        method splits line into array of tokens by using whitespace as the delimiter
+        each element of array represents separate token extracted from original line
+        "\\s+" --> matches whitespace characters like spaces or tabs
      */
-    public String[] removeTokens(String line) {
-        return new String[0];
+    private String[] removeTokens(String line) {
+        return line.split("\\s+");
+    }
+
+    // not sure if this will remove # from the right spot?
+    // this removes # if it's found at index 0
+    private String removeComments(String line) {
+        return line.split("#")[0].trim();
     }
 
     /*
@@ -74,21 +93,14 @@ public class BugParser {
       validates the label, checks for duplicate labels,
       handles label placeholders
      */
-    public void parseLabel(String [] tokens) {
-    }
-
-    /*
-    remove possible # (comments) user might input
- */
-    public void removeComments(String line) {
-
+    private void parseLabel(String [] tokens, int lineNumber) {
     }
 
     /*
         checks if label is already defined
         throws exception if it is a duplicate
      */
-    public void checkForDuplicateLabel(String label) throws BugParserException {
+    private void checkForDuplicateLabel(String label) throws BugParserException {
 
     }
 
@@ -96,7 +108,7 @@ public class BugParser {
         finds the missing position/destination associated with label in bytecode
         use floyd's algorithm (tortoise and hare)
      */
-    public Integer getMissingPosition(String target) {
+    private Integer getMissingPosition(String target) {
 
         return null;
     }
@@ -105,7 +117,7 @@ public class BugParser {
         add logic to process other commands here
         for ex., convert commands to bytecode
      */
-    public void processCommand(String[] tokens) {
+    private void processCommand(String[] tokens) {
 
     }
 }
