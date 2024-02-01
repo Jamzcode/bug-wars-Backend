@@ -8,7 +8,7 @@ public class BugParser {
     private final Map<String, Integer> controls;
     private final Map<String, Integer> labels = new HashMap<>();
     private final List<Integer> bytecode = new ArrayList<>();
-    private final BugParserInfo info = new BugParserInfo();
+    private final Map<String, List<Integer>> labelPlaceholders = new HashMap<>();
 
     public BugParser(Map<String, Integer> actions, Map<String, Integer> controls) {
         this.actions = actions;
@@ -27,9 +27,9 @@ public class BugParser {
             parseLine(lines[i], i + 1);
         }
 
-//        checkForMissingDestinations();
-//        fixDanglingLabelDefinition();
-//        checkforInfiniteLoop();
+        checkForMissingDestinations();
+        fixDanglingLabelDefinition();
+        checkForInfiniteLoop();
         return bytecode;
     }
 
@@ -49,18 +49,33 @@ public class BugParser {
             if (tokens[0].equals(":")) {
                 parseLabel(tokens, lineNumber);
             } else {
-                processCommand(tokens);
+                processCommand(tokens, lineNumber);
             }
         }
     }
 
     /*
-        method iterates through each character in 'label' string
-        for each character, checks if it's a valid label character:
-            1. char is uppercase (A-Z)
-            2. char is a digit (0-9)
-            3. char is an underscore (_)
-     */
+    method purpose:
+    if first token = control command, call method processFlowControl
+    if first token = actions command, call method processAction
+ */
+    private void processCommand(String[] tokens, int lineNumber) throws BugParserException {
+        if (controls.containsKey(tokens[0])) {
+            processFlowControl(tokens, lineNumber);
+        } else if (actions.containsKey(tokens[0])) {
+            processAction(tokens);
+        } else {
+            throw new BugParserException(String.format("Unrecognized command on line %d: %s", lineNumber, tokens[0]));
+        }
+    }
+
+    /*
+    method iterates through each character in 'label' string
+    for each character, checks if it's a valid label character:
+        1. char is uppercase (A-Z)
+        2. char is a digit (0-9)
+        3. char is an underscore (_)
+    */
     private void validateLabels(String label, int lineNumber) throws BugParserException {
         for (int i = 0; i < label.length(); i++) {
             char c = label.charAt(i);
@@ -89,35 +104,60 @@ public class BugParser {
     }
 
     /*
-      finds line that starts with label (":")
-      validates the label, checks for duplicate labels,
-      handles label placeholders
+      method purpose: extracts, validates, and processes label in assembly code
+      adds the label to a map ("labels"), checks for duplicates, and stores its position in bytecode
      */
-    private void parseLabel(String [] tokens, int lineNumber) {
+    private void parseLabel(String [] tokens, int lineNumber) throws BugParserException {
+        String label = tokens[1].substring(1);
+        validateLabels(label, lineNumber);
+        checkForDuplicateLabel(label, lineNumber);
+
+        labels.put(label, bytecode.size());
+        processLabelPlaceholders(label);
+    }
+
+    /*
+        method purpose: checks if labelPlaceholders map has a label.
+        if there is a label, find the list of locations in bytecode associated with the label.
+        for each location, update bytecode of each location with current size of bytecode list.
+        replaces position of label in bytecode, then removes label from map.
+     */
+    private void processLabelPlaceholders(String label) {
+        if (labelPlaceholders.containsKey(label)) {
+            labelPlaceholders.get(label).forEach(location -> bytecode.set(location, bytecode.size()));
+            labelPlaceholders.remove(label);
+        }
+    }
+
+
+    private void processFlowControl(String[] tokens, int lineNumber) throws BugParserException {
+        //check if statement has correct number of tokens
+        if (tokens.length != 2) {
+            throw new BugParserException(String.format("Incorrect number of tokens on line %d", lineNumber));
+        }
+
+        //extract command and target from tokens
+        String command = tokens[0];
+        String target = tokens[1];
+
+        //validate label names, check for duplicates
+        validateLabels(target, lineNumber);
+
+        //add bytecode representation of the control command
+        bytecode.add(controls.get(command));
+        //add the destination position to the bytecode
+        bytecode.add(getDestination(target));
     }
 
     /*
         checks if label is already defined
         throws exception if it is a duplicate
      */
-    private void checkForDuplicateLabel(String label) throws BugParserException {
-
+    private void checkForDuplicateLabel(String label, int lineNumber) throws BugParserException {
+        if (labels.containsKey(label)) {
+            throw new BugParserException(String.format("Duplicate label on line $d: %s", lineNumber, label));
+        }
     }
 
-    /*
-        finds the missing position/destination associated with label in bytecode
-        use floyd's algorithm (tortoise and hare)
-     */
-    private Integer getMissingPosition(String target) {
-
-        return null;
-    }
-
-    /*
-        add logic to process other commands here
-        for ex., convert commands to bytecode
-     */
-    private void processCommand(String[] tokens) {
-
-    }
 }
+
