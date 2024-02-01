@@ -13,7 +13,9 @@ import java.util.List;
 public interface ScriptRepository extends JpaRepository<Script, Long> {
     List<Script> getScriptsByUser(User user);
 
-    @Query("SELECT new com.bugwarsBackend.bugwars.dto.response.ScriptName(s.id, s.name) FROM Script s WHERE s.isBytecodeValid = true")
+    @Query("SELECT new com.bugwarsBackend.bugwars.dto.response.ScriptName(s.id, s.name) " +
+            "FROM Script s " +
+            "WHERE s.isBytecodeValid = true")
     List<ScriptName> getAllValidScripts();
 
     Boolean existsByName(String name);
