@@ -26,10 +26,6 @@ public class BugParser {
         for (int i = 0; i < lines.length; i++) {
             parseLine(lines[i], i + 1);
         }
-
-        checkForMissingDestinations();
-        fixDanglingLabelDefinition();
-        checkForInfiniteLoop();
         return bytecode;
     }
 
@@ -135,7 +131,6 @@ public class BugParser {
         if (tokens.length != 2) {
             throw new BugParserException(String.format("Incorrect number of tokens on line %d", lineNumber));
         }
-
         //extract command and target from tokens
         String command = tokens[0];
         String target = tokens[1];
@@ -156,6 +151,32 @@ public class BugParser {
     private void checkForDuplicateLabel(String label, int lineNumber) throws BugParserException {
         if (labels.containsKey(label)) {
             throw new BugParserException(String.format("Duplicate label on line $d: %s", lineNumber, label));
+        }
+    }
+
+    /*
+        method purpose: finds destination position for given label in bytecode
+        if label is found, returns its position (this is the missing ? in the array!!!)
+        or null if it's a placeholder
+
+        **i could also return specific position, but do not think i need to do this
+     */
+    private Integer getDestination(String target) {
+        if (labels.containsKey(target)) {
+            return labels.get(target);
+        } else {
+            processLabelPlaceholders(target);
+            return null;
+        }
+    }
+
+    private void processAction(String[] tokens) {
+        bytecode.add(actions.get(tokens[0]));
+    }
+
+    private void checkForMissingDestinations() throws BugParserException {
+        if (labelPlaceholders.isEmpty()) {
+            return
         }
     }
 }
