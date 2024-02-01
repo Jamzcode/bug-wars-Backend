@@ -2,6 +2,7 @@ package com.bugwarsBackend.bugwars.parser;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BugParser {
     private final Map<String, Integer> actions;
@@ -14,6 +15,7 @@ public class BugParser {
         this.actions = actions;
         this.controls = controls;
     }
+
     /*
     given assembly code from user (userInput), processes each line,
     returns list of integers representing bytecode;
@@ -26,6 +28,8 @@ public class BugParser {
         for (int i = 0; i < lines.length; i++) {
             parseLine(lines[i], i + 1);
         }
+
+        checkForMissingDestinations(labelPlaceholders);
         return bytecode;
     }
 
@@ -39,9 +43,9 @@ public class BugParser {
      */
     private void parseLine(String line, int lineNumber) throws BugParserException {
         removeComments(line);
-        String [] tokens = removeTokens(line);
+        String[] tokens = removeTokens(line);
 
-        if(tokens.length > 0) {
+        if (tokens.length > 0) {
             if (tokens[0].equals(":")) {
                 parseLabel(tokens, lineNumber);
             } else {
@@ -79,7 +83,7 @@ public class BugParser {
                 throw new BugParserException(String.format("Invalid label name on line %d: %s", lineNumber, label));
             }
         }
-        if(label.isEmpty()) {
+        if (label.isEmpty()) {
             throw new BugParserException("Empty label found");
         }
     }
@@ -103,7 +107,7 @@ public class BugParser {
       method purpose: extracts, validates, and processes label in assembly code
       adds the label to a map ("labels"), checks for duplicates, and stores its position in bytecode
      */
-    private void parseLabel(String [] tokens, int lineNumber) throws BugParserException {
+    private void parseLabel(String[] tokens, int lineNumber) throws BugParserException {
         String label = tokens[1].substring(1);
         validateLabels(label, lineNumber);
         checkForDuplicateLabel(label, lineNumber);
@@ -150,7 +154,7 @@ public class BugParser {
      */
     private void checkForDuplicateLabel(String label, int lineNumber) throws BugParserException {
         if (labels.containsKey(label)) {
-            throw new BugParserException(String.format("Duplicate label on line $d: %s", lineNumber, label));
+            throw new BugParserException(String.format("Duplicate label on line %d: %s", lineNumber, label));
         }
     }
 
@@ -159,7 +163,7 @@ public class BugParser {
         if label is found, returns its position (this is the missing ? in the array!!!)
         or null if it's a placeholder
 
-        **i could also return specific position, but do not think i need to do this
+        **I could also return specific position, but do not think I need to do this
      */
     private Integer getDestination(String target) {
         if (labels.containsKey(target)) {
@@ -174,10 +178,48 @@ public class BugParser {
         bytecode.add(actions.get(tokens[0]));
     }
 
-    private void checkForMissingDestinations() throws BugParserException {
+    private void checkForMissingDestinations(Map<String, List<Integer>> labelPlaceholders) throws BugParserException {
         if (labelPlaceholders.isEmpty()) {
-            return
+            return; // No missing destinations
         }
+
+        // Sort entries based on the first line number of each label
+        List<Map.Entry<String, List<Integer>>> sortedEntries = new ArrayList<>(labelPlaceholders.entrySet());
+        sortedEntries.sort(Comparator.comparing(entry -> entry.getValue().get(0)));
+
+        // Build the missingLabelList string
+        StringBuilder missingLabelListBuilder = new StringBuilder();
+        for (Map.Entry<String, List<Integer>> entry : sortedEntries) {
+            String label = entry.getKey();
+            List<Integer> lineNumbers = entry.getValue();
+
+            // Append label and associated line numbers to the StringBuilder
+            missingLabelListBuilder.append(String.format("%s on line(s) [%s]", label,
+                    lineNumbers.stream().map(String::valueOf).collect(Collectors.joining(", "))));
+
+            // Append a comma if it's not the last entry
+            if (sortedEntries.indexOf(entry) < sortedEntries.size() - 1) {
+                missingLabelListBuilder.append(", ");
+            }
+        }
+        // Throw the exception with the formatted missingLabelList
+        throw new BugParserException("Could not find label for the following targets: " + missingLabelListBuilder);
+    }
+
+    private void fixDanglingDefinition() {
+
+    }
+
+    private void checkForInfiniteLoop() throws BugParserException {
+
+    }
+
+    private boolean hasCycle(int truCondition) {
+        return false;
+    }
+
+    private int nextInstruction(int i, int trueCondition) {
+        return i;
     }
 }
 
