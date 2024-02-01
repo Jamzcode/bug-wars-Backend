@@ -158,6 +158,5 @@ public class BugParser {
             throw new BugParserException(String.format("Duplicate label on line $d: %s", lineNumber, label));
         }
     }
-
 }
 

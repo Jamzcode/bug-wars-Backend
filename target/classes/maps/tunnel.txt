@@ -1,0 +1,22 @@
+21 21 Tunnel
+XXXXXXXXXXXXXXXXXXXXX
+X                   X
+X XXXXXXXXXXXXXXXXX X
+X X  1 1 1 1 1 1  X X
+X X  11111111111    X
+X X  1         1  XXX
+X X                 X
+X X      f      f   X
+X X       XX      X X
+X X   f aaaaaa f  X X
+X      aaaaaaaa   X X
+X X   f aaaaaa f  X X
+X X       XX      X X
+X X  f      f       X
+X X                 X
+X X  0         0  XXX
+X X  00000000000    X
+X X  0 0 0 0 0 0  X X
+X XXXXXXXXXXXXXXXXX X
+X                   X
+XXXXXXXXXXXXXXXXXXXXX

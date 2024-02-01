@@ -64,6 +64,7 @@ public class ScriptService {
         }
 
         //TODO implement logic to set isBytecodeValid to true once input has been parsed
+        // Need to call BugParser here
 
 
 
@@ -94,6 +95,7 @@ public class ScriptService {
         }
 
         //TODO implement logic to set isBytecodeValid to true once input has been parsed
+        // Need to call BugParser here
 
 
 
