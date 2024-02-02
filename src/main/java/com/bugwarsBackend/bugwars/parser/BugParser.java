@@ -178,48 +178,134 @@ public class BugParser {
         bytecode.add(actions.get(tokens[0]));
     }
 
+    /*
+        method purpose:
+        missingLabelList is a string that lists all missing labels
+        iterator iterates through labelPlaceholders map and appends missing labels to it
+        for each entry, it retrieves the label ("key") associated with lineNumbers ("value")
+        it appends the label and associated line numbers to the missingLabelList
+
+     */
     private void checkForMissingDestinations(Map<String, List<Integer>> labelPlaceholders) throws BugParserException {
         if (labelPlaceholders.isEmpty()) {
-            return; // No missing destinations
+            return; // no missing destinations
         }
 
-        // Sort entries based on the first line number of each label
-        List<Map.Entry<String, List<Integer>>> sortedEntries = new ArrayList<>(labelPlaceholders.entrySet());
-        sortedEntries.sort(Comparator.comparing(entry -> entry.getValue().get(0)));
-
-        // Build the missingLabelList string
+        // build the missingLabelList string without sorting
         StringBuilder missingLabelListBuilder = new StringBuilder();
-        for (Map.Entry<String, List<Integer>> entry : sortedEntries) {
+        Iterator<Map.Entry<String, List<Integer>>> iterator = labelPlaceholders.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry<String, List<Integer>> entry = iterator.next();
             String label = entry.getKey();
             List<Integer> lineNumbers = entry.getValue();
 
-            // Append label and associated line numbers to the StringBuilder
+            // append label and associated line numbers to the StringBuilder
             missingLabelListBuilder.append(String.format("%s on line(s) [%s]", label,
                     lineNumbers.stream().map(String::valueOf).collect(Collectors.joining(", "))));
 
-            // Append a comma if it's not the last entry
-            if (sortedEntries.indexOf(entry) < sortedEntries.size() - 1) {
+            // append a comma if it's not the last entry
+            if (iterator.hasNext()) {
                 missingLabelListBuilder.append(", ");
             }
         }
-        // Throw the exception with the formatted missingLabelList
+        // throw the exception with the formatted missingLabelList
         throw new BugParserException("Could not find label for the following targets: " + missingLabelListBuilder);
     }
 
-    private void fixDanglingDefinition() {
 
+    /*
+        method purpose: checks if there is a second-to-last command in the bytecode that is
+        a control command and if last command's position is out of bounds.
+        if so, it sets the last command in the bytecode to 0.
+        ** assume the last position is invalid/dangling.
+     */
+    private void ensureValidLabelPosition() {
+        int size = bytecode.size();
+
+        if (size >= 2) {
+            int penultimateCommand = bytecode.get(size - 2);
+            int ultimateCommand = bytecode.get(size - 1);
+
+            if (controls.containsValue(penultimateCommand) && ultimateCommand >= size) {
+                bytecode.set(size - 1, 0);
+            }
+        }
     }
 
+    /*
+        method purpose: checks if there is an infinite loop
+     */
     private void checkForInfiniteLoop() throws BugParserException {
-
+        for (int trueCondition : controls.values()) {
+            if (hasCycle(trueCondition)) {
+                throw new BugParserException("Infinite loop detected");
+            }
+        }
     }
 
-    private boolean hasCycle(int truCondition) {
-        return false;
+    /*
+        method purpose: checks if there is an infinite cycle in the bytecode
+     */
+    private boolean hasCycle(int trueCondition) {
+        Set<Integer> visited = new HashSet<>();
+        int currentCommand = trueCondition;
+
+        while (currentCommand != -1) {
+            if (!visited.add(currentCommand)) {
+                return true;  // Detected a cycle
+            }
+
+            // Update current command based on control flow
+            currentCommand = getNextCommand(currentCommand);
+        }
+
+        return false;  // No cycle detected
     }
 
-    private int nextInstruction(int i, int trueCondition) {
-        return i;
+    /*
+        method purpose: returns the next command based on control flow
+     */
+    private int getNextCommand(int currentCommand) {
+        // find the index of the current command in the bytecode
+        int i = bytecode.indexOf(currentCommand);
+
+        // check if the current command is in the bytecode
+        if (i != -1) {
+            // get the values associated with control flow conditions
+            int trueCondition = controls.get("trueCondition");
+            int gotoCommand = controls.get("goto");
+
+            // check if the current command is a trueCondition or goto command
+            if (List.of(trueCondition, gotoCommand).contains(currentCommand)) {
+                // return the command following the current one in the bytecode
+                return bytecode.get(i + 1);
+            } else {
+                // return the command two positions ahead (modulo to handle wrapping)
+                return (i + 2) % bytecode.size();
+            }
+        }
+
+        // default case: return -1 indicating end of control flow
+        return -1;
+    }
+
+
+    /*
+        method purpose: returns the control by value;
+     */
+    private String getControlByValue(int trueCondition) {
+        // iterate through the controls map
+        for (Map.Entry<String, Integer> entry : controls.entrySet()) {
+            // check if the value associated with the current entry matches the provided trueCondition
+            if (entry.getValue() == trueCondition) {
+                // return the key (control) associated with the matching value
+                return entry.getKey();
+            }
+        }
+
+        // if no match is found, throw an exception indicating that the condition is not in the map
+        throw new IllegalArgumentException("Condition not in map.");
     }
 }
 
