@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 
 public class ScriptName {
     private Long id;
-    private String name;
+    private String scriptName;
+    private String username;
 }

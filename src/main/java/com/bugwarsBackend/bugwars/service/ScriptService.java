@@ -28,7 +28,10 @@ public class ScriptService {
 
 
     public List<ScriptName> getAllValidScripts() {
-        return scriptRepository.getAllValidScripts();
+        return scriptRepository.getAllValidScripts()
+                .stream()
+                .map((s) -> new ScriptName(s.getId(), s.getName(), s.getUser().getUsername())) // convert Script to ScriptName
+                .toList();
     }
 
     public List<Script> getUserScripts(Principal principal) {

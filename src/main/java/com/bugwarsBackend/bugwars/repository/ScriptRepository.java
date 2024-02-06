@@ -13,10 +13,11 @@ import java.util.List;
 public interface ScriptRepository extends JpaRepository<Script, Long> {
     List<Script> getScriptsByUser(User user);
 
-    @Query("SELECT new com.bugwarsBackend.bugwars.dto.response.ScriptName(s.id, s.name) " +
+    @Query("SELECT new com.bugwarsBackend.bugwars.dto.response.ScriptName(s.id, s.name, u.username) " +
             "FROM Script s " +
+            "JOIN s.user u " +
             "WHERE s.isBytecodeValid = true")
-    List<ScriptName> getAllValidScripts();
+    List<Script> getAllValidScripts();
 
     Boolean existsByName(String name);
 }
