@@ -20,8 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.security.Principal;
 import java.util.Arrays;
@@ -29,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -164,16 +163,55 @@ public class ScriptServiceTests {
 
     @Test
     public void deleteScriptById_deletesScript() {
+        // Arrange
+        Long scriptId = 1L;
+        USER.setId(1L);
+        Principal principal = mockPrincipal("usernameTest");
+        when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(USER));
+        when(scriptRepository.findById(scriptId)).thenReturn(Optional.of(SCRIPT_1));
 
+        //Act
+        scriptService.deleteScriptById(scriptId, principal);
+
+        // Assert
+        verify(scriptRepository).deleteById(scriptId);
     }
 
     @Test
     public void deleteScriptById_throwsExceptionIfScriptDoesNotExist() {
+        // Arrange
+        Long scriptId = 5L;
+        USER.setId(1L);
+        Principal principal = mockPrincipal("usernameTest");
+        when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(USER));
+        when(scriptRepository.findById(scriptId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> scriptService.deleteScriptById(scriptId, principal))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(exception -> {
+                    assertThat(exception).hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
+                    assertThat(exception).hasMessageContaining("Script does not exist");
+                });
 
     }
 
     @Test
     public void deleteScriptById_throwsExceptionIfForbidden() {
+        // Arrange
+        Long scriptId = 1L;
+        USER.setId(5L);
+        Principal principal = mockPrincipal("usernameTest");
+        when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(USER));
+        when(scriptRepository.findById(scriptId)).thenReturn(Optional.of(SCRIPT_1));
+
+        // Act & Assert
+        assertThatThrownBy(() -> scriptService.deleteScriptById(scriptId, principal))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(exception -> {
+                    assertThat(exception).hasFieldOrPropertyWithValue("status", HttpStatus.FORBIDDEN);
+                    assertThat(exception).hasMessageContaining("Unable to delete this script. You must be the owner of this script to delete it");
+                });
 
     }
 

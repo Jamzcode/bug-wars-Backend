@@ -70,6 +70,7 @@ public class ScriptService {
         }
 
         List<Integer> byteCode = null;
+        // TODO parse method is not working correctly
         try {
            byteCode = parser.parse(request.getRaw());
             script.setBytecodeValid(true);
