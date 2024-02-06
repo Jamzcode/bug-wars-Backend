@@ -15,7 +15,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -81,7 +85,7 @@ public class ScriptServiceTests {
     @Test
     public void getScriptById_returnsCorrectScript() {
         // Arrange
-        long scriptId = 1L;
+        Long scriptId = 1L;
         USER.setId(1L);
         Principal principal = mockPrincipal("usernameTest");
         when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(USER));
@@ -97,12 +101,40 @@ public class ScriptServiceTests {
 
     @Test
     public void getScriptById_throwsExceptionIfScriptDoesNotExist() {
+        // Arrange
+        Long scriptId = 1L;
+        USER.setId(1L);
+        Principal principal = mockPrincipal("usernameTest");
+        when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(USER));
+        when(scriptRepository.findById(scriptId)).thenReturn(Optional.empty());
 
+        // Act & Assert
+        assertThatThrownBy(() -> scriptService.getScriptById(scriptId, principal))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(exception -> {
+                    assertThat(exception).hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
+                    assertThat(exception).hasMessageContaining("Script does not exist");
+                });
     }
 
     @Test
     public void getScriptById_throwsExceptionIfForbidden() {
+        // Arrange
+        Long scriptId = 1L;
+        USER.setId(1L);
+        User mockUser = new User();
+        mockUser.setId(2L);
+        Principal principal = mockPrincipal("usernameTest");
+        when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(mockUser));
+        when(scriptRepository.findById(scriptId)).thenReturn(Optional.of(SCRIPT_1));
 
+        // Act & Assert
+        assertThatThrownBy(() -> scriptService.getScriptById(scriptId, principal))
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(exception -> {
+                    assertThat(exception).hasFieldOrPropertyWithValue("status", HttpStatus.FORBIDDEN);
+                    assertThat(exception).hasMessageContaining("You must be the owner of this script to access it");
+                });
     }
 
     @Test

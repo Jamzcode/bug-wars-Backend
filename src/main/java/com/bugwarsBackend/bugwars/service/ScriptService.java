@@ -4,6 +4,7 @@ import com.bugwarsBackend.bugwars.dto.request.ScriptRequest;
 import com.bugwarsBackend.bugwars.dto.response.ScriptName;
 import com.bugwarsBackend.bugwars.model.Script;
 import com.bugwarsBackend.bugwars.model.User;
+import com.bugwarsBackend.bugwars.parser.BugParser;
 import com.bugwarsBackend.bugwars.repository.ScriptRepository;
 import com.bugwarsBackend.bugwars.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,7 @@ public class ScriptService {
         //Not done
         Script script = new Script();
         User user = getUser(principal);
+        BugParser bugParser = new BugParser();
 
         if (scriptRepository.existsByName(request.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Script name already exists");
