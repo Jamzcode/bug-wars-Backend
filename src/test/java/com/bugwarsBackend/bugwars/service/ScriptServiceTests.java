@@ -7,10 +7,13 @@ import com.bugwarsBackend.bugwars.parser.BugParser;
 import com.bugwarsBackend.bugwars.repository.ScriptRepository;
 import com.bugwarsBackend.bugwars.repository.UserRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.mock;
@@ -45,6 +48,8 @@ public class ScriptServiceTests {
     @InjectMocks
     private ScriptService scriptService;
 
+
+
     @Test
     public void getAllValidScripts_returnsAllValidScripts() {
         // Set up
@@ -61,7 +66,7 @@ public class ScriptServiceTests {
     @Test
     public void getUserScripts_returnsUserScripts() {
         // Set up
-        Principal principal = mock(Principal.class);
+        Principal principal = mockPrincipal("usernameTest");
         when(principal.getName()).thenReturn("usernameTest");
         when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(USER));
         when(scriptRepository.getScriptsByUser(USER)).thenReturn(List.of(SCRIPT_1, SCRIPT_2, SCRIPT_3, SCRIPT_4));
@@ -75,8 +80,20 @@ public class ScriptServiceTests {
 
     @Test
     public void getScriptById_returnsCorrectScript() {
+        // Arrange
+        long scriptId = 1L;
+        USER.setId(1L);
+        Principal principal = mockPrincipal("usernameTest");
+        when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(USER));
+        when(scriptRepository.findById(scriptId)).thenReturn(Optional.of(SCRIPT_1));
 
+        // Act
+        Script result = scriptService.getScriptById(scriptId, principal);
+
+        // Assert
+        assertEquals("side to side", result.getName());
     }
+
 
     @Test
     public void getScriptById_throwsExceptionIfScriptDoesNotExist() {
@@ -128,4 +145,9 @@ public class ScriptServiceTests {
 
     }
 
+    private Principal mockPrincipal(String username) {
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn(username);
+        return principal;
+    }
 }

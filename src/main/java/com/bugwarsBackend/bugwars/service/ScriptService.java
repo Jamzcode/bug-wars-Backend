@@ -134,7 +134,7 @@ public class ScriptService {
         if (userOptional.isPresent()) {
             return userOptional.get();
         } else {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User does not exist.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
     }
 
