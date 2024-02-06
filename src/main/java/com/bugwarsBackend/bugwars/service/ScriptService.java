@@ -5,6 +5,7 @@ import com.bugwarsBackend.bugwars.dto.response.ScriptName;
 import com.bugwarsBackend.bugwars.model.Script;
 import com.bugwarsBackend.bugwars.model.User;
 import com.bugwarsBackend.bugwars.parser.BugParser;
+import com.bugwarsBackend.bugwars.parser.BugParserException;
 import com.bugwarsBackend.bugwars.repository.ScriptRepository;
 import com.bugwarsBackend.bugwars.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ScriptService {
@@ -59,28 +61,27 @@ public class ScriptService {
 
 
     public Script createScript(ScriptRequest request, Principal principal) {
-        //Not done
-        Script script = new Script();
         User user = getUser(principal);
-        BugParser bugParser = new BugParser();
+        Script script = new Script();
+        BugParser parser = new BugParser();
 
         if (scriptRepository.existsByName(request.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Script name already exists");
         }
 
-        //TODO implement logic to set isBytecodeValid to true once input has been parsed
-        // Need to call BugParser here
+        List<Integer> byteCode = null;
+        try {
+           byteCode = parser.parse(request.getRaw());
+            script.setBytecodeValid(true);
 
-
-
-        //map script fields here
+        } catch (BugParserException e) {
+            script.setBytecodeValid(false);
+            script.setBytecode("[]");
+        }
         script.setName(request.getName());
         script.setRaw(request.getRaw());
-
-        //TODO find way to set byte code
-        //script.setBytecode(request.get());
         script.setUser(user);
-
+        script.setBytecode(formatBytecode(byteCode));
 
         return scriptRepository.save(script);
     }
@@ -138,6 +139,13 @@ public class ScriptService {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
+    }
+
+    private String formatBytecode(List<Integer> byteCode) {
+        if (byteCode == null) {
+            return "Bytecode is null";
+        }
+        return String.format("[%s]", byteCode.stream().map(Object::toString).collect(Collectors.joining(", ")));
     }
 
 

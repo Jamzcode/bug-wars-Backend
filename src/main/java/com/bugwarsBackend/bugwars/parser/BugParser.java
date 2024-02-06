@@ -16,6 +16,11 @@ public class BugParser {
         this.controls = controls;
     }
 
+    public BugParser() {
+        this.actions = new HashMap<>();
+        this.controls = new HashMap<>();
+    }
+
     /*
     given assembly code from user (userInput), processes each line,
     returns list of integers representing bytecode;
