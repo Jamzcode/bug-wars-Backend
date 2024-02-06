@@ -12,10 +12,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,7 +60,17 @@ public class ScriptServiceTests {
 
     @Test
     public void getUserScripts_returnsUserScripts() {
+        // Set up
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn("usernameTest");
+        when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(USER));
+        when(scriptRepository.getScriptsByUser(USER)).thenReturn(List.of(SCRIPT_1, SCRIPT_2, SCRIPT_3, SCRIPT_4));
 
+        // Execute
+        List<Script> result = scriptService.getUserScripts(principal);
+
+        // Verify
+        Assertions.assertThat(result).containsExactly(SCRIPT_1, SCRIPT_2, SCRIPT_3, SCRIPT_4);
     }
 
     @Test
