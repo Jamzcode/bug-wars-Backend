@@ -31,10 +31,13 @@ public class ScriptService {
 
 
     public List<ScriptName> getAllValidScripts() {
-        return scriptRepository.getAllValidScripts()
-                .stream()
-                .map((s) -> new ScriptName(s.getId(), s.getName(), s.getUser().getUsername())) // convert Script to ScriptName
-                .toList();
+        List<ScriptName> result = scriptRepository.getAllValidScripts();
+
+        if (result.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No valid scripts found");
+        } else {
+            return result;
+        }
     }
 
     public List<Script> getUserScripts(Principal principal) {

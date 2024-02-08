@@ -23,6 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,29 +56,48 @@ public class ScriptServiceTests {
 
     @Test
     public void getAllValidScripts_returnsAllValidScripts() {
-        // Set up
-        when(scriptRepository.getAllValidScripts()).thenReturn(List.of(SCRIPT_1, SCRIPT_2, SCRIPT_4));
+        // Arrange
+        when(scriptRepository.getAllValidScripts()).thenReturn(Arrays.asList(
+                new ScriptName(1L, "side to side", "usernameTest"),
+                new ScriptName(2L, "move attack", "usernameTest"),
+                new ScriptName(4L, "move in line", "usernameTest")
+        ));
 
-        // Execute
+        // Act
         List<ScriptName> result = scriptService.getAllValidScripts();
 
-        // Verify
+        // Assert
         Assertions.assertThat(result).hasSize(3);
 
     }
 
     @Test
+    public void getAllValidScripts_throwsExceptionIfNoValidScripts() {
+        // Arrange
+        when(scriptRepository.getAllValidScripts()).thenReturn(Collections.emptyList());
+
+        // Act and Assert
+        assertThatThrownBy(() -> scriptService.getAllValidScripts())
+                .isInstanceOf(ResponseStatusException.class)
+                .satisfies(exception -> {
+                    assertThat(exception).hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
+                    assertThat(exception).hasMessageContaining("\"No valid scripts found");
+                });
+
+    }
+
+    @Test
     public void getUserScripts_returnsUserScripts() {
-        // Set up
+        // Arrange
         Principal principal = mockPrincipal("usernameTest");
         when(principal.getName()).thenReturn("usernameTest");
         when(userRepository.findByUsername("usernameTest")).thenReturn(Optional.of(USER));
         when(scriptRepository.getScriptsByUser(USER)).thenReturn(List.of(SCRIPT_1, SCRIPT_2, SCRIPT_3, SCRIPT_4));
 
-        // Execute
+        // Act
         List<Script> result = scriptService.getUserScripts(principal);
 
-        // Verify
+        // Assert
         Assertions.assertThat(result).containsExactly(SCRIPT_1, SCRIPT_2, SCRIPT_3, SCRIPT_4);
     }
 

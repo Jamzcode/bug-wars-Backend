@@ -17,7 +17,7 @@ public interface ScriptRepository extends JpaRepository<Script, Long> {
             "FROM Script s " +
             "JOIN s.user u " +
             "WHERE s.isBytecodeValid = true")
-    List<Script> getAllValidScripts();
+    List<ScriptName> getAllValidScripts();
 
     Boolean existsByName(String name);
 }
