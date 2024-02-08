@@ -48,15 +48,54 @@ public class BugParser {
         --> if true, call parseLabel method to handle label parsing
         --> if false, assumes line is a regular command, calls processCommand to handle command parsing
      */
+//    private void parseLine(String line, int lineNumber) throws BugParserException {
+//        removeComments(line);
+//        String[] tokens = removeTokens(line);
+//
+//        if (tokens.length > 0) {
+//            if (tokens[0].contains(":")) {
+//                parseLabel(tokens, lineNumber);
+//            } else {
+//                processCommand(tokens, lineNumber);
+//            }
+//        }
+//    }
+
+//    private void parseLine(String line, int lineNumber) throws BugParserException {
+//        // Remove comments from the line
+//        line = removeComments(line);
+//
+//        // Split the line into tokens
+//        String[] tokens = removeTokens(line);
+//
+//        // Iterate over each token
+//        for (String token : tokens) {
+//            if (token.contains(":")) {
+//                parseLabel(tokens, lineNumber);
+//            } else {
+//                // If the token is not a label, process it as a regular command
+//                processCommand(token, lineNumber);
+//            }
+//        }
+//    }
+
     private void parseLine(String line, int lineNumber) throws BugParserException {
-        removeComments(line);
+        // Remove comments from the line
+        line = removeComments(line);
+
+        // Split the line into tokens
         String[] tokens = removeTokens(line);
 
-        if (tokens.length > 0) {
-            if (tokens[0].equals(":")) {
-                parseLabel(tokens, lineNumber);
+        // Iterate over each token
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i];
+            if (token.contains(":")) {
+                parseLabel(tokens[i+1], lineNumber);
+                String target = tokens[i+1]; // Get the target label
+                processFlowControl(token, target, lineNumber);
+                i++; // Skip the next token since it's the target label
             } else {
-                processCommand(tokens, lineNumber);
+                processAction(token);
             }
         }
     }
@@ -66,13 +105,23 @@ public class BugParser {
     if first token = control command, call method processFlowControl
     if first token = actions command, call method processAction
  */
-    private void processCommand(String[] tokens, int lineNumber) throws BugParserException {
-        if (controls.containsKey(tokens[0])) {
-            processFlowControl(tokens, lineNumber);
-        } else if (actions.containsKey(tokens[0])) {
-            processAction(tokens);
+//    private void processCommand(String[] tokens, int lineNumber) throws BugParserException {
+//        if (controls.containsKey(tokens[0])) {
+//            processFlowControl(tokens, lineNumber);
+//        } else if (actions.containsKey(tokens[0])) {
+//            processAction(tokens);
+//        } else {
+//            throw new BugParserException(String.format("Unrecognized command on line %d: %s", lineNumber, tokens[0]));
+//        }
+//    }
+
+    private void processCommand(String token, String target, int lineNumber) throws BugParserException {
+        if (controls.containsKey(token)) {
+            processFlowControl(token, target, lineNumber);
+        } else if (actions.containsKey(token)) {
+            processAction(token);
         } else {
-            throw new BugParserException(String.format("Unrecognized command on line %d: %s", lineNumber, tokens[0]));
+            throw new BugParserException(String.format("Unrecognized command on line %d: %s", lineNumber, token));
         }
     }
 
@@ -114,8 +163,8 @@ public class BugParser {
       method purpose: extracts, validates, and processes label in assembly code
       adds the label to a map ("labels"), checks for duplicates, and stores its position in bytecode
      */
-    private void parseLabel(String[] tokens, int lineNumber) throws BugParserException {
-        String label = tokens[1].substring(1);
+    private void parseLabel(String token, int lineNumber) throws BugParserException {
+        String label = token;
         validateLabels(label, lineNumber);
         checkForDuplicateLabel(label, lineNumber);
 
@@ -137,23 +186,35 @@ public class BugParser {
     }
 
 
-    private void processFlowControl(String[] tokens, int lineNumber) throws BugParserException {
-        //check if statement has correct number of tokens
-        if (tokens.length != 2) {
-            throw new BugParserException(String.format("Incorrect number of tokens on line %d", lineNumber));
-        }
-        //extract command and target from tokens
-        String command = tokens[0];
-        String target = tokens[1];
+//    private void processFlowControl(String tokens, int lineNumber) throws BugParserException {
+//        //check if statement has correct number of tokens
+//        if (tokens.length != 2) {
+//            throw new BugParserException(String.format("Incorrect number of tokens on line %d", lineNumber));
+//        }
+//        //extract command and target from tokens
+//        String command = tokens[0];
+//        String target = tokens[1];
+//
+//        //validate label names, check for duplicates
+//        validateLabels(target, lineNumber);
+//
+//        //add bytecode representation of the control command
+//        bytecode.add(controls.get(command));
+//        //add the destination position to the bytecode
+//        bytecode.add(getDestination(target));
+//    }
 
-        //validate label names, check for duplicates
+    private void processFlowControl(String token, String target, int lineNumber) throws BugParserException {
+        // Validate the target label
         validateLabels(target, lineNumber);
 
-        //add bytecode representation of the control command
-        bytecode.add(controls.get(command));
-        //add the destination position to the bytecode
+        // Add the bytecode representation of the control command
+        bytecode.add(controls.get(token));
+
+        // Add the destination position to the bytecode
         bytecode.add(getDestination(target));
     }
+
 
     /*
         checks if label is already defined
@@ -181,8 +242,8 @@ public class BugParser {
         }
     }
 
-    private void processAction(String[] tokens) {
-        bytecode.add(actions.get(tokens[0]));
+    private void processAction(String tokens) {
+        bytecode.add(actions.get(tokens));
     }
 
     /*
@@ -227,18 +288,32 @@ public class BugParser {
         if so, it sets the last command in the bytecode to 0.
         ** assume the last position is invalid/dangling.
      */
+//    private void ensureValidLabelPosition() {
+//        int size = bytecode.size();
+//
+//        if (size >= 2) {
+//            int penultimateCommand = bytecode.get(size - 2);
+//            int ultimateCommand = bytecode.get(size - 1);
+//
+//            if (controls.containsValue(penultimateCommand) && ultimateCommand >= size) {
+//                bytecode.set(size - 1, 0);
+//            }
+//        }
+//    }
     private void ensureValidLabelPosition() {
         int size = bytecode.size();
 
         if (size >= 2) {
-            int penultimateCommand = bytecode.get(size - 2);
-            int ultimateCommand = bytecode.get(size - 1);
+            Integer penultimateCommand = bytecode.get(size - 2);  // Use Integer instead of int to handle null values
+            Integer ultimateCommand = bytecode.get(size - 1);
 
-            if (controls.containsValue(penultimateCommand) && ultimateCommand >= size) {
+            // Check if penultimateCommand or ultimateCommand is null before accessing intValue()
+            if (penultimateCommand != null && ultimateCommand != null && controls.containsValue(penultimateCommand) && ultimateCommand.intValue() >= size) {
                 bytecode.set(size - 1, 0);
             }
         }
     }
+
 
     /*
         method purpose: checks if there is an infinite loop
