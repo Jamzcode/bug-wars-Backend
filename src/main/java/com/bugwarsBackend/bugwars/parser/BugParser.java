@@ -29,7 +29,9 @@ public class BugParser {
             parseLine(lines[i], i + 1);
         }
 
+        ensureValidLabelPosition();
         checkForMissingDestinations(labelPlaceholders);
+        checkForInfiniteLoop();
         return bytecode;
     }
 
