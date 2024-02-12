@@ -53,18 +53,6 @@ public class BugParser {
         --> if true, call parseLabel method to handle label parsing
         --> if false, assumes line is a regular command, calls processCommand to handle command parsing
      */
-//    private void parseLine(String line, int lineNumber) throws BugParserException {
-//        removeComments(line);
-//        String[] tokens = removeTokens(line);
-//
-//        if (tokens.length > 0) {
-//            if (tokens[0].contains(":")) {
-//                parseLabel(tokens, lineNumber);
-//            } else {
-//                processCommand(tokens, lineNumber);
-//            }
-//        }
-//    }
 
 //    private void parseLine(String line, int lineNumber) throws BugParserException {
 //        // Remove comments from the line
