@@ -1,6 +1,8 @@
 package com.bugwarsBackend.bugwars.parser;
 
 
+import com.bugwarsBackend.bugwars.config.BugAssemblyCommands;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,7 +15,7 @@ public class BugParser {
 
     public BugParser(Map<String, Integer> actions, Map<String, Integer> controls) {
         this.actions = actions;
-        this.controls = controls;
+        this.controls = convertKeysToLowerCase(controls);;
     }
 
     public BugParser() {
@@ -93,15 +95,24 @@ public class BugParser {
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i].toLowerCase();
             if (token.contains(":")) {
-                parseLabel(tokens[i], lineNumber);
-                String target = tokens[i+1]; // Get the target label
-                processFlowControl(token, target, lineNumber);
-                i++; // Skip the next token since it's the target label
+                String label = token.substring(1); // Remove the ":" from the label
+                Integer controlBytecode = controls.get(label); // Check if the label matches a control command
+                if (controlBytecode != null) {
+                    bytecode.add(controlBytecode); // Add the bytecode value to the list
+                } else {
+                    processAction(token);
+                }
+//                parseLabel(tokens[i], lineNumber);
+//                String target = tokens[i+1]; // Get the target label
+//                processFlowControl(token, target, lineNumber);
+//                i++; // Skip the next token since it's the target label
             } else {
                 processAction(token);
             }
         }
     }
+
+
 
 //    private void parseLine(String line, int lineNumber) throws BugParserException {
 //        // Remove comments from the line
@@ -384,18 +395,42 @@ public class BugParser {
     /*
         method purpose: returns the next command based on control flow
      */
+//    private int getNextCommand(int currentCommand) {
+//        // find the index of the current command in the bytecode
+//        int i = bytecode.indexOf(currentCommand);
+//
+//        // check if the current command is in the bytecode
+//        if (i != -1) {
+//            // get the values associated with control flow conditions
+//            int trueCondition = controls.get("trueCondition");
+//            int gotoCommand = controls.get("goto");
+//
+//            // check if the current command is a trueCondition or goto command
+//            if (List.of(trueCondition, gotoCommand).contains(currentCommand)) {
+//                // return the command following the current one in the bytecode
+//                return bytecode.get(i + 1);
+//            } else {
+//                // return the command two positions ahead (modulo to handle wrapping)
+//                return (i + 2) % bytecode.size();
+//            }
+//        }
+//
+//        // default case: return -1 indicating end of control flow
+//        return -1;
+//    }
+
     private int getNextCommand(int currentCommand) {
         // find the index of the current command in the bytecode
         int i = bytecode.indexOf(currentCommand);
 
         // check if the current command is in the bytecode
         if (i != -1) {
-            // get the values associated with control flow conditions
-            int trueCondition = controls.get("trueCondition");
-            int gotoCommand = controls.get("goto");
+            // get the values associated with control flow conditions if they exist
+            Integer trueCondition = controls.get("trueCondition");
+            Integer gotoCommand = controls.get("goto");
 
             // check if the current command is a trueCondition or goto command
-            if (List.of(trueCondition, gotoCommand).contains(currentCommand)) {
+            if (trueCondition != null && gotoCommand != null && List.of(trueCondition.intValue(), gotoCommand.intValue()).contains(currentCommand)) {
                 // return the command following the current one in the bytecode
                 return bytecode.get(i + 1);
             } else {
@@ -407,6 +442,7 @@ public class BugParser {
         // default case: return -1 indicating end of control flow
         return -1;
     }
+
 
 
     /*
@@ -424,6 +460,11 @@ public class BugParser {
 
         // if no match is found, throw an exception indicating that the condition is not in the map
         throw new IllegalArgumentException("Condition not in map.");
+    }
+
+    private Map<String, Integer> convertKeysToLowerCase(Map<String, Integer> map) {
+        return map.entrySet().stream()
+                .collect(Collectors.toMap(entry -> entry.getKey().toLowerCase(), Map.Entry::getValue));
     }
 }
 
