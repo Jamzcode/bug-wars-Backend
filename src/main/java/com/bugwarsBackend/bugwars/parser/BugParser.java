@@ -116,7 +116,7 @@ public class BugParser {
                     // Call parseLabel with the next token as the label
                     parseLabel(tokens[i+1], lineNumber);
                     String target = tokens[i+1]; // Get the target label
-                    processFlowControl(token, target, lineNumber);
+                    processCommand(token, target, lineNumber);
                     i++; // Skip the next token since it's the target label
                 } else {
                     // If i+1 is out of bounds, throw an exception or handle the situation accordingly
@@ -146,8 +146,8 @@ public class BugParser {
     private void processCommand(String token, String target, int lineNumber) throws BugParserException {
         if (controls.containsKey(token)) {
             processFlowControl(token, target, lineNumber);
-        } else if (actions.containsKey(token)) {
-            processAction(token);
+//        } else if (actions.containsKey(token)) {
+//            processAction(token);
         } else {
             throw new BugParserException(String.format("Unrecognized command on line %d: %s", lineNumber, token));
         }
