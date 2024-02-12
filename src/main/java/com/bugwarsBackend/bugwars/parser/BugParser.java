@@ -79,6 +79,27 @@ public class BugParser {
 //        }
 //    }
 
+//    private void parseLine(String line, int lineNumber) throws BugParserException {
+//        // Remove comments from the line
+//        line = removeComments(line);
+//
+//        // Split the line into tokens
+//        String[] tokens = removeTokens(line);
+//
+//        // Iterate over each token
+//        for (int i = 0; i < tokens.length; i++) {
+//            String token = tokens[i];
+//            if (token.contains(":")) {
+//                parseLabel(tokens[i], lineNumber);
+//                String target = tokens[i+1]; // Get the target label
+//                processFlowControl(token, target, lineNumber);
+//                i++; // Skip the next token since it's the target label
+//            } else {
+//                processAction(token);
+//            }
+//        }
+//    }
+
     private void parseLine(String line, int lineNumber) throws BugParserException {
         // Remove comments from the line
         line = removeComments(line);
@@ -90,10 +111,17 @@ public class BugParser {
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
             if (token.contains(":")) {
-                parseLabel(tokens[i+1], lineNumber);
-                String target = tokens[i+1]; // Get the target label
-                processFlowControl(token, target, lineNumber);
-                i++; // Skip the next token since it's the target label
+                // Check if i+1 is within the bounds of the tokens array
+                if (i + 1 < tokens.length) {
+                    // Call parseLabel with the next token as the label
+                    parseLabel(tokens[i+1], lineNumber);
+                    String target = tokens[i+1]; // Get the target label
+                    processFlowControl(token, target, lineNumber);
+                    i++; // Skip the next token since it's the target label
+                } else {
+                    // If i+1 is out of bounds, throw an exception or handle the situation accordingly
+                    throw new BugParserException("Label is missing");
+                }
             } else {
                 processAction(token);
             }
@@ -156,7 +184,12 @@ public class BugParser {
     // not sure if this will remove # from the right spot?
     // this removes # if it's found at index 0
     private String removeComments(String line) {
-        return line.split("#")[0].trim();
+        int index = line.indexOf("#");
+        if (index == -1) {
+            return line;
+        }
+
+        return line.substring(0, index);
     }
 
     /*
