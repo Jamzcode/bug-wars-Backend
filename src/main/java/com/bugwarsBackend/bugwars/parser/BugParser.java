@@ -29,6 +29,9 @@ public class BugParser {
     checks for infinite loops (helper method)
      */
     public List<Integer> parse(String userInput) throws BugParserException {
+        //Convert to lowercase
+        userInput = userInput.toLowerCase();
+
         String[] lines = userInput.split("\\R");
         for (int i = 0; i < lines.length; i++) {
             parseLine(lines[i], i + 1);
@@ -81,7 +84,7 @@ public class BugParser {
 
     private void parseLine(String line, int lineNumber) throws BugParserException {
         // Remove comments from the line and convert to lowercase
-        String formattedInput = removeComments(line).toLowerCase();
+        line = removeComments(line);
 
         // Split the line into tokens
         String[] tokens = removeTokens(line);
