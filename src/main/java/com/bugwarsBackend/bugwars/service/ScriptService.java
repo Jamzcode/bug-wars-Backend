@@ -6,6 +6,7 @@ import com.bugwarsBackend.bugwars.model.Script;
 import com.bugwarsBackend.bugwars.model.User;
 import com.bugwarsBackend.bugwars.parser.BugParser;
 import com.bugwarsBackend.bugwars.parser.BugParserException;
+import com.bugwarsBackend.bugwars.parser.BugParserFactory;
 import com.bugwarsBackend.bugwars.repository.ScriptRepository;
 import com.bugwarsBackend.bugwars.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class ScriptService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    BugParserFactory bugParserFactory;
 
 
 
@@ -66,7 +70,7 @@ public class ScriptService {
     public Script createScript(ScriptRequest request, Principal principal) {
         User user = getUser(principal);
         Script script = new Script();
-        BugParser parser = new BugParser();
+        BugParser bugParser = bugParserFactory.createInstance();
 
         if (scriptRepository.existsByName(request.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Script name already exists");
@@ -75,7 +79,7 @@ public class ScriptService {
         List<Integer> byteCode = null;
         // TODO parse method is not working correctly
         try {
-           byteCode = parser.parse(request.getRaw());
+           byteCode = bugParser.parse(request.getRaw());
             script.setBytecodeValid(true);
 
         } catch (BugParserException e) {
@@ -94,11 +98,12 @@ public class ScriptService {
         //Not done
         User user = getUser(principal);
         Optional<Script> scriptOptional = scriptRepository.findById(id);
+        BugParser bugParser = bugParserFactory.createInstance();
         Script updatedScript;
 
         if(scriptOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Script does not exist");
-        } else if (!user.getId().equals(scriptOptional.get().getId())) {
+        } else if (!user.getId().equals(scriptOptional.get().getUser().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You must be the owner of this script to access it");
         } else {
             updatedScript = scriptOptional.get();
@@ -107,6 +112,14 @@ public class ScriptService {
         //TODO implement logic to set isBytecodeValid to true once input has been parsed
         // Need to call BugParser here
 
+        List<Integer> byteCode = null;
+        try {
+            byteCode = bugParser.parse(request.getRaw());
+            updatedScript.setBytecodeValid(true);
+        } catch (BugParserException e) {
+            updatedScript.setBytecodeValid(false);
+            updatedScript.setBytecode("[]");
+        }
 
 
         //map script fields here
@@ -114,7 +127,7 @@ public class ScriptService {
         updatedScript.setRaw(request.getRaw());
 
         //TODO find way to set byte code
-        //script.setBytecode(request.get());
+        updatedScript.setBytecode(formatBytecode(byteCode));
 
         return scriptRepository.save(updatedScript);
     }
