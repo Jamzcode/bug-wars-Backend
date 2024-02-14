@@ -6,6 +6,14 @@ import com.bugwarsBackend.bugwars.config.BugAssemblyCommands;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+// TODO: Review how :goto is handled - Need to find way to point to correct position
+// TODO: Review why remove comments ignore everything after the #. Need to find way to handle this
+// TODO: Review why if only one action is after a control, it returns 0.
+//  But if there is more than one actions, it returns correct value
+// TODO: Clean up comments
+// TODO: Review why some methods are not being called
+
 public class BugParser {
     private final Map<String, Integer> actions;
     private final Map<String, Integer> controls;
