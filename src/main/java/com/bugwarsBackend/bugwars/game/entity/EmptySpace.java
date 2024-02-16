@@ -5,25 +5,23 @@ import lombok.NoArgsConstructor;
 
 import java.awt.*;
 
-@NoArgsConstructor  // Exclude Entity fields from constructor generation
-public class Bug implements Entity {
-    private int bugType;
+@AllArgsConstructor
+@NoArgsConstructor
+public class EmptySpace implements Entity {
+    private Point position;
 
     @Override
     public void setPosition(Point position) {
-    }
-
-    public Bug(int bugType) {
-        this.bugType = bugType;
+        this.position = position;
     }
 
     @Override
     public Point getPosition() {
-        return null;
+        return position;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(bugType); // Return the bugType as a string
+        return " ";
     }
 }
