@@ -1,18 +1,102 @@
 package com.bugwarsBackend.bugwars.game.entity;
 
-import lombok.AllArgsConstructor;
-
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
-@AllArgsConstructor
 public class Bug implements Entity {
+    private Map<Integer, Command> commands = new HashMap<>();
+    private int swarm;
+    private Point coords;
+    private Direction direction;
+    private int[] bytecode;
+    private int index = 0;
+
+    public Bug(Point coords, int swarm, int[] bytecode, Direction direction) {
+        this.coords = coords;
+        this.swarm = swarm;
+        this.bytecode = bytecode;
+        this.direction = direction;
+
+        loadCommands();
+    }
+
+    private void loadCommands() {
+        commands.put(30, this::ifEnemy);
+        commands.put(31, this::ifAlly);
+        commands.put(32, this::ifFood);
+        commands.put(33, this::ifEmpty);
+        commands.put(34, this::ifWall);
+        commands.put(35, this::_goto);
+    }
+
+    public int determineAction(Entity frontEntity) {
+        int result = -1;
+
+        if (commands.containsKey(bytecode[index])) {
+            Command command = commands.get(bytecode[index]);
+            boolean success = command.execute(frontEntity);
+
+            if (success) {
+                index = bytecode[index + 1];
+            } else {
+                incrementIndex(2);
+            }
+        } else {
+            result = bytecode[index];
+            incrementIndex(1); // Increment the index here
+        }
+        return result;
+    }
+
+
+    private void incrementIndex(int increment) {
+        index = (index + increment) % bytecode.length;
+    }
+
+    private boolean ifEnemy(Entity frontEntity) {
+    }
+
+    private boolean ifAlly(Entity frontEntity) {
+    }
+
+    private boolean ifFood(Entity frontEntity) {
+    }
+
+    private boolean ifEmpty(Entity frontEntity) {
+    }
+
+    private boolean ifWall(Entity frontEntity) {
+    }
+
+    private boolean _goto(Entity frontEntity) {
+    }
+
 
     @Override
     public void setPosition(Point position) {
+
     }
 
     @Override
     public Point getPosition() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        String color = switch (swarm) {
+            case 0 -> "\033[0;34m"; // blue
+            case 1 -> "\033[0;31m"; // red
+            default -> throw new IllegalStateException("Unexpected value: " + swarm);
+        };
+        return String.format("%s%s%s", color, direction.toString(), "\033[0m");
+    }
+
+    // FunctionalInterface used to enforce single abstract method
+    @FunctionalInterface
+    interface Command {
+        boolean execute(Entity frontEntity);
+    }
+
 }
