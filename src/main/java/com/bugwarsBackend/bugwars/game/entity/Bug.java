@@ -9,7 +9,6 @@ public class Bug implements Entity {
 
     @Override
     public void setPosition(Point position) {
-
     }
 
     @Override

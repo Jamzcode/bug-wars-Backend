@@ -3,6 +3,10 @@ package com.bugwarsBackend.bugwars.game.entity;
 public enum Direction {
     NORTH, EAST, SOUTH, WEST;
 
+    public Direction faceNorth() {
+
+    }
+
     public Direction turnLeft() {
         return switch (this) {
             case NORTH -> WEST;
