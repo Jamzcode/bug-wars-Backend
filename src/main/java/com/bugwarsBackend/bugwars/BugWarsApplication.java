@@ -13,7 +13,7 @@ public class BugWarsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BugWarsApplication.class, args);
-		Resource mapResource = new ClassPathResource("maps/arena.txt");
+		Resource mapResource = new ClassPathResource("maps/tunnel.txt");
 		Battleground battleground = new Battleground(mapResource);
 		battleground.printGrid();
 	}
