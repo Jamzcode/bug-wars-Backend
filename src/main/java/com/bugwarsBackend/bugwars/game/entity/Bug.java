@@ -54,44 +54,53 @@ public class Bug implements Entity {
         return result;
     }
 
-
     private void incrementIndex(int increment) {
         index = (index + increment) % bytecode.length;
     }
 
     private boolean ifEnemy(Entity frontEntity) {
+        if (frontEntity instanceof Bug) {
+            Bug enemyBug = (Bug) frontEntity;
+            return enemyBug.swarm != swarm;
+        }
         return false;
     }
 
     private boolean ifAlly(Entity frontEntity) {
+        if (frontEntity instanceof Bug) {
+            Bug allyBug = (Bug) frontEntity;
+            return allyBug.swarm == swarm;
+        }
         return false;
     }
 
     private boolean ifFood(Entity frontEntity) {
+        if (frontEntity instanceof Food) {
+            return true;
+        }
         return false;
     }
 
     private boolean ifEmpty(Entity frontEntity) {
-        return false;
+        return frontEntity == null;
     }
 
     private boolean ifWall(Entity frontEntity) {
-        return false;
+        return frontEntity instanceof Wall;
     }
 
     private boolean _goto(Entity frontEntity) {
-        return false;
-    }
-
-
-    @Override
-    public void setPosition(Point position) {
-
+        return true;
     }
 
     @Override
     public Point getPosition() {
         return null;
+    }
+
+    @Override
+    public void setPosition(Point position) {
+
     }
 
     @Override
@@ -114,5 +123,4 @@ public class Bug implements Entity {
     interface Command {
         boolean execute(Entity frontEntity);
     }
-
 }
