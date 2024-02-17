@@ -29,7 +29,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(long user_id) {
+    public Optional<User> getUserById(Long user_id) {
         return userRepository.findById(user_id);
     }
 

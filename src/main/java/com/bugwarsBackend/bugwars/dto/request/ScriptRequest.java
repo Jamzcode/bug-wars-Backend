@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateScriptRequest {
+public class ScriptRequest {
 
     @NotBlank
     private String name;
