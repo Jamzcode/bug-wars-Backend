@@ -2,8 +2,8 @@ package com.bugwarsBackend.bugwars.game.setup;
 
 import com.bugwarsBackend.bugwars.game.Swarm;
 import com.bugwarsBackend.bugwars.game.entity.Bug;
+import com.bugwarsBackend.bugwars.game.entity.Entity;
 
-import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.util.List;
 

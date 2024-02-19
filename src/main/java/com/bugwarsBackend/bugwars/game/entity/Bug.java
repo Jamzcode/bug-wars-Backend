@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Bug implements Entity {
-    private Map<Integer, Command> commands = new HashMap<>();
+    private final Map<Integer, Command> commands = new HashMap<>();
     private int swarm;
     private Point coords;
     private Direction direction;
@@ -75,10 +75,7 @@ public class Bug implements Entity {
     }
 
     private boolean ifFood(Entity frontEntity) {
-        if (frontEntity instanceof Food) {
-            return true;
-        }
-        return false;
+        return frontEntity instanceof Food;
     }
 
     private boolean ifEmpty(Entity frontEntity) {
@@ -116,6 +113,14 @@ public class Bug implements Entity {
 
     public String bugTeam() {
         return String.valueOf(bugType); // Return the bugType as a string
+    }
+
+    public Point getCoords() {
+        return coords;
+    }
+
+    public int getSwarm() {
+        return swarm;
     }
 
     // FunctionalInterface used to enforce single abstract method
