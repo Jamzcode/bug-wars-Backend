@@ -27,7 +27,7 @@ public class TurnOrderCalculator {
     private Map<Double, List<Bug>> groupBugsByDistance() {
         Map<Double, List<Bug>> distanceBuckets = new HashMap<>();
 
-        // Iterate through the grid to group bugs by distance
+        // iterate through the grid to group bugs by distance
         for (Entity[] entities : grid) {
             for (Entity e : entities) {
                 if (e instanceof Bug) {
@@ -43,10 +43,10 @@ public class TurnOrderCalculator {
     private List<Bug> findPairs(Map<Double, List<Bug>> distanceBuckets) {
         List<Bug> roughOrder = new ArrayList<>();
 
-        // Iterate through distance buckets to find pairs
+        // iterate through distance buckets to find pairs
         for (List<Bug> bugs : distanceBuckets.values()) {
             if (bugs.size() == 2) {
-                // If there are exactly two bugs, add them directly
+                // if there are exactly two bugs, add them directly
                 roughOrder.addAll(bugs);
             } else {
                 // If more than two bugs, attempt to find pairs
@@ -69,7 +69,7 @@ public class TurnOrderCalculator {
     }
 
     private List<Bug> sortTurnOrder(List<Bug> roughOrder) {
-        // Sort the turn order based on swarm affiliations
+        // sort the turn order based on swarm affiliations
         roughOrder.sort(Comparator.comparingInt(Bug::getSwarm));
         return roughOrder;
     }
@@ -81,7 +81,7 @@ public class TurnOrderCalculator {
     }
 
     private boolean areAligned(Bug bug1, Bug bug2) {
-        // Check if bugs are aligned either vertically or horizontally
+        // check if bugs are aligned either vertically or horizontally
         return bug1.getCoords().x == bug2.getCoords().x || bug1.getCoords().y == bug2.getCoords().y;
     }
 }

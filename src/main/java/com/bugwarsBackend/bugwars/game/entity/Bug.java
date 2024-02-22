@@ -24,8 +24,8 @@ public class Bug implements Entity {
 
     public Bug(int bugType) {
         this.bugType = bugType;
+        this.direction = Direction.NORTH; // Assuming NORTH is the default direction
     }
-
     private void loadCommands() {
         commands.put(30, this::ifEnemy);
         commands.put(31, this::ifAlly);
@@ -102,13 +102,20 @@ public class Bug implements Entity {
 
     @Override
     public String toString() {
-        String color = switch (swarm) {
-            case 0 -> "\033[0;34m"; // blue
-            case 1 -> "\033[0;31m"; // red
-            default -> throw new IllegalStateException("Unexpected value: " + swarm);
-        };
-        String directionString = (direction != null) ? direction.toString() : "No direction"; // Check for null before invoking toString
-        return String.format("%s%s%s", color, directionString, "\033[0m");
+        String color;
+        if (swarm == 0) {
+            color = "\033[0;34m"; // blue
+        } else if (swarm == 1) {
+            color = "\033[0;31m"; // red
+        } else {
+            throw new IllegalStateException("Unexpected value: " + swarm);
+        }
+
+        String directionString = ""; // Set directionString to an empty string
+
+        String bugTypeString = (bugType == 0 || bugType == 1) ? String.valueOf(bugType) : ""; // Display bugType only if it's 0 or 1
+
+        return String.format("%s%s%s\033[0m", color, bugTypeString, "\033[0m");
     }
 
     public String bugTeam() {
