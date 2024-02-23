@@ -1,5 +1,7 @@
 package com.bugwarsBackend.bugwars.game.entity;
 
+import java.awt.*;
+
 public enum Direction {
     NORTH, EAST, SOUTH, WEST;
 
@@ -32,6 +34,15 @@ public enum Direction {
             case EAST -> ">";
             case SOUTH -> "v";
             case WEST -> "<";
+        };
+    }
+
+    public Point goForward(Point coords) {
+        return switch (this) {
+            case NORTH -> new Point(coords.x, coords.y - 1);
+            case EAST -> new Point(coords.x + 1, coords.y);
+            case SOUTH -> new Point(coords.x, coords.y + 1);
+            case WEST -> new Point(coords.x - 1, coords.y);
         };
     }
 }

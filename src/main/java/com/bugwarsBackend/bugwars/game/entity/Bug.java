@@ -22,6 +22,10 @@ public class Bug implements Entity {
         loadCommands();
     }
 
+    public Direction getDirection() {
+        return direction;
+    }
+
     public Bug(int bugType) {
         this.bugType = bugType;
         this.direction = Direction.NORTH; // Assuming NORTH is the default direction
