@@ -1,5 +1,6 @@
 package com.bugwarsBackend.bugwars.game.setup;
 
+import com.bugwarsBackend.bugwars.game.Battleground;
 import com.bugwarsBackend.bugwars.game.entity.*;
 import org.springframework.core.io.Resource;
 
@@ -52,7 +53,6 @@ public class BattlegroundFactory {
     }
 
 
-
     // Can do this for front end??:
     //    const imageMap = {
     //        '0': 'url_to_image_for_0.jpg',
@@ -75,13 +75,15 @@ public class BattlegroundFactory {
         }
     }
 
-    public void printGrid() {
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                System.out.print(grid[i][j] + " ");
+    public Battleground printGrid() {
+        Battleground battleground = new Battleground("Map", grid, null); // Assuming the last argument should be null
+        for (int i = 0; i < battleground.getGrid().length; i++) {
+            for (int j = 0; j < battleground.getGrid()[i].length; j++) {
+                System.out.print(battleground.getGrid()[i][j] + " ");
             }
             System.out.println(); // Move to the next line after printing each row
         }
+        return battleground; // Return the battleground instance
     }
-
 }
+

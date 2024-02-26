@@ -3,28 +3,49 @@ package com.bugwarsBackend.bugwars.game;
 import com.bugwarsBackend.bugwars.game.entity.Bug;
 import com.bugwarsBackend.bugwars.game.entity.Entity;
 import com.bugwarsBackend.bugwars.game.entity.Food;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class Battleground {
-    private final List<Bug> bugs;
-    private final String name;
-    private final Entity[][] grid;
+    private List<Bug> bugs;
+    private String name;
+    private Entity[][] grid;
     private final Map<Integer, Action> actions = new HashMap<>();
     private int index;
 
     public Battleground(String name, Entity[][] grid, List<Bug> bugs) {
         this.name = name;
         this.grid = grid;
-        this.bugs = bugs;
+        if (bugs != null) {
+            this.bugs = new ArrayList<>(bugs);
+        } else {
+            this.bugs = new ArrayList<>();
+        }
 
         init();
+    }
+
+    public void print() {
+        for (Entity[] entities : grid) {
+            for (Entity e : entities) {
+                if (e == null) {
+                    System.out.print(" ");
+                } else {
+                    System.out.print(e);
+                }
+            }
+            System.out.println();
+        }
     }
 
     public TickSummary nextTick() {
@@ -49,11 +70,9 @@ public class Battleground {
         actions.put(14, bug -> eat(bug));
     }
 
-
     private void noop(Bug bug) {
         // do nothing!
     }
-
     private void mov(Bug bug) {
         Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
         Entity destination = getEntityAtCoords(bugFrontCoords);
@@ -63,34 +82,43 @@ public class Battleground {
         grid[bug.getCoords().y][bug.getCoords().x] = null;
         bug.setCoords(bugFrontCoords);
     }
-
     private void rotr(Bug bug) {
         bug.setDirection(bug.getDirection().turnRight());
     }
-
 
     private void rotl(Bug bug) {
         bug.setDirection(bug.getDirection().turnLeft());
     }
 
-
     private void att(Bug bug) {
         Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
         Entity target = getEntityAtCoords(bugFrontCoords);
 
-        // Check if the target is either a Bug or Food
+        if (target == null) return;
+
         if (target instanceof Bug) {
-            // If the target is a Bug, remove it from the list of bugs and replace it with Food
-            Bug targetBug = (Bug) target;
-            if (bugs.indexOf(targetBug) < index) index--;
-            bugs.remove(targetBug);
-            grid[bugFrontCoords.y][bugFrontCoords.x] = new Food();
+            removeBugAndReplaceWithFood(bugFrontCoords);
         } else if (target instanceof Food) {
-            // If the target is Food, remove it from the grid
-            grid[bugFrontCoords.y][bugFrontCoords.x] = null;
+            removeFood(bugFrontCoords);
         }
     }
 
+    private void removeBugAndReplaceWithFood(Point bugFrontCoords) {
+        Entity entity = grid[bugFrontCoords.y][bugFrontCoords.x];
+        if (!(entity instanceof Bug)) return;
+
+        Bug targetBug = (Bug) entity;
+        if (bugs.indexOf(targetBug) < index) index--;
+        bugs.remove(targetBug);
+        grid[bugFrontCoords.y][bugFrontCoords.x] = new Food();
+    }
+
+    private void removeFood(Point bugFrontCoords) {
+        Entity entity = grid[bugFrontCoords.y][bugFrontCoords.x];
+        if (!(entity instanceof Food)) return;
+
+        grid[bugFrontCoords.y][bugFrontCoords.x] = null;
+    }
 
     private void eat(Bug bug) {
         Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
@@ -111,6 +139,17 @@ public class Battleground {
         grid[bugFrontCoords.y][bugFrontCoords.x] = newSpawn;
         bugs.add(index, newSpawn);
         index++;
+
+        // Update the bug's properties to reflect reproduction
+        bug.setBytecode(doubleBytecode(bug.getBytecode()));
+    }
+
+    // Helper method to double the bytecode of a bug
+    private int[] doubleBytecode(int[] bytecode) {
+        int[] newBytecode = new int[bytecode.length * 2];
+        System.arraycopy(bytecode, 0, newBytecode, 0, bytecode.length);
+        System.arraycopy(bytecode, 0, newBytecode, bytecode.length, bytecode.length);
+        return newBytecode;
     }
 
     private Entity getEntityAtCoords(Point coords) {
@@ -124,8 +163,5 @@ public class Battleground {
     @FunctionalInterface
     interface Action {
         void run(Bug bug);
-    }
-
-    private record ActionSummary(Point coordinates, int action) {
     }
 }
