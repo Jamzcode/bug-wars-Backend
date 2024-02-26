@@ -12,7 +12,6 @@ import java.util.List;
 public class TickSummary {
     List<ActionSummary> summary;
     boolean lastSwarmStanding;
-
     public TickSummary(Object actionsTaken, boolean lastSwarmStanding) {
     }
 }

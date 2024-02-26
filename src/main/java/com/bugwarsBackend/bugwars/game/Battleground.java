@@ -2,6 +2,7 @@ package com.bugwarsBackend.bugwars.game;
 
 import com.bugwarsBackend.bugwars.game.entity.Bug;
 import com.bugwarsBackend.bugwars.game.entity.Entity;
+import com.bugwarsBackend.bugwars.game.entity.Food;
 import lombok.Data;
 
 import java.awt.Point;
@@ -54,23 +55,62 @@ public class Battleground {
     }
 
     private void mov(Bug bug) {
-        // Move logic
+        Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
+        Entity destination = getEntityAtCoords(bugFrontCoords);
+        if (destination != null) return;
+
+        grid[bugFrontCoords.y][bugFrontCoords.x] = bug;
+        grid[bug.getCoords().y][bug.getCoords().x] = null;
+        bug.setCoords(bugFrontCoords);
     }
 
     private void rotr(Bug bug) {
-        // Rotate right logic
+        bug.setDirection(bug.getDirection().turnRight());
     }
+
 
     private void rotl(Bug bug) {
-        // Rotate left logic
+        bug.setDirection(bug.getDirection().turnLeft());
     }
+
 
     private void att(Bug bug) {
-        // Attack logic
+        Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
+        Entity target = getEntityAtCoords(bugFrontCoords);
+
+        // Check if the target is either a Bug or Food
+        if (target instanceof Bug) {
+            // If the target is a Bug, remove it from the list of bugs and replace it with Food
+            Bug targetBug = (Bug) target;
+            if (bugs.indexOf(targetBug) < index) index--;
+            bugs.remove(targetBug);
+            grid[bugFrontCoords.y][bugFrontCoords.x] = new Food();
+        } else if (target instanceof Food) {
+            // If the target is Food, remove it from the grid
+            grid[bugFrontCoords.y][bugFrontCoords.x] = null;
+        }
     }
 
+
     private void eat(Bug bug) {
-        // Eat logic
+        Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
+        Entity target = getEntityAtCoords(bugFrontCoords);
+
+        // Check if the target is Food
+        if (!(target instanceof Food)) return;
+
+        // Create a new instance of Bug with the same properties as the original bug
+        Bug newSpawn = new Bug(
+                bugFrontCoords,
+                bug.getSwarm(),
+                bug.getBytecode(),
+                bug.getDirection() // Assuming the direction remains the same
+        );
+
+        // Update the grid and add the new Bug instance to the list of bugs
+        grid[bugFrontCoords.y][bugFrontCoords.x] = newSpawn;
+        bugs.add(index, newSpawn);
+        index++;
     }
 
     private Entity getEntityAtCoords(Point coords) {

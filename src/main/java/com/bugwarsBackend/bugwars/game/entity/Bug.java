@@ -1,9 +1,12 @@
 package com.bugwarsBackend.bugwars.game.entity;
 
+import lombok.Data;
+
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Data
 public class Bug implements Entity {
     private final Map<Integer, Command> commands = new HashMap<>();
     private int swarm;
@@ -124,14 +127,6 @@ public class Bug implements Entity {
 
     public String bugTeam() {
         return String.valueOf(bugType); // Return the bugType as a string
-    }
-
-    public Point getCoords() {
-        return coords;
-    }
-
-    public int getSwarm() {
-        return swarm;
     }
 
     // FunctionalInterface used to enforce single abstract method
