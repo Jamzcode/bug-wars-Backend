@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BugParserFactory {
-    public BugParser createInstance() {
+    public static BugParser createInstance() {
         return new BugParser(BugAssemblyCommands.getActions(),
                 BugAssemblyCommands.getControls());
     }

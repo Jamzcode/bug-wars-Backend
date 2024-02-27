@@ -29,14 +29,19 @@ public class BugParser {
     checks for infinite loops (helper method)
      */
     public List<Integer> parse(String userInput) throws BugParserException {
+        BugParser bugParserFactory = BugParserFactory.createInstance();
+//        System.out.println("bug parser factory controls" + bugParserFactory.controls.keySet());
+//        System.out.println("bug parser factory actions" + bugParserFactory.actions.keySet());
         String[] lines = userInput.split("\\R");
+//        System.out.println(userInput);
         for (int i = 0; i < lines.length; i++) {
-            parseLine(lines[i], i + 1);
+            parseLine(lines[i], i + 1, bugParserFactory);
         }
 
-        ensureValidLabelPosition();
+        ensureValidLabelPosition(bugParserFactory);
         checkForMissingDestinations(labelPlaceholders);
-        checkForInfiniteLoop();
+        checkForInfiniteLoop(bugParserFactory);
+        System.out.println("bytecode result" + bytecode);
         return bytecode;
     }
 
@@ -48,54 +53,25 @@ public class BugParser {
         --> if true, call parseLabel method to handle label parsing
         --> if false, assumes line is a regular command, calls processCommand to handle command parsing
      */
-//    private void parseLine(String line, int lineNumber) throws BugParserException {
-//        removeComments(line);
-//        String[] tokens = removeTokens(line);
-//
-//        if (tokens.length > 0) {
-//            if (tokens[0].contains(":")) {
-//                parseLabel(tokens, lineNumber);
-//            } else {
-//                processCommand(tokens, lineNumber);
-//            }
-//        }
-//    }
 
-//    private void parseLine(String line, int lineNumber) throws BugParserException {
-//        // Remove comments from the line
-//        line = removeComments(line);
-//
-//        // Split the line into tokens
-//        String[] tokens = removeTokens(line);
-//
-//        // Iterate over each token
-//        for (String token : tokens) {
-//            if (token.contains(":")) {
-//                parseLabel(tokens, lineNumber);
-//            } else {
-//                // If the token is not a label, process it as a regular command
-//                processCommand(token, lineNumber);
-//            }
-//        }
-//    }
-
-    private void parseLine(String line, int lineNumber) throws BugParserException {
+    private void parseLine(String line, int lineNumber, BugParser bugParser) throws BugParserException {
         // Remove comments from the line
         line = removeComments(line);
-
+//        System.out.println("line" + line);
         // Split the line into tokens
         String[] tokens = removeTokens(line);
 
         // Iterate over each token
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
+//            System.out.println("token " + token);
             if (token.contains(":")) {
                 parseLabel(tokens[i+1], lineNumber);
                 String target = tokens[i+1]; // Get the target label
-                processFlowControl(token, target, lineNumber);
+                processFlowControl(token, target, lineNumber, bugParser);
                 i++; // Skip the next token since it's the target label
             } else {
-                processAction(token);
+                processAction(token, bugParser);
             }
         }
     }
@@ -105,21 +81,12 @@ public class BugParser {
     if first token = control command, call method processFlowControl
     if first token = actions command, call method processAction
  */
-//    private void processCommand(String[] tokens, int lineNumber) throws BugParserException {
-//        if (controls.containsKey(tokens[0])) {
-//            processFlowControl(tokens, lineNumber);
-//        } else if (actions.containsKey(tokens[0])) {
-//            processAction(tokens);
-//        } else {
-//            throw new BugParserException(String.format("Unrecognized command on line %d: %s", lineNumber, tokens[0]));
-//        }
-//    }
 
-    private void processCommand(String token, String target, int lineNumber) throws BugParserException {
+    private void processCommand(String token, String target, int lineNumber, BugParser bugParser) throws BugParserException {
         if (controls.containsKey(token)) {
-            processFlowControl(token, target, lineNumber);
-        } else if (actions.containsKey(token)) {
-            processAction(token);
+            processFlowControl(token, target, lineNumber, bugParser);
+        } else if (bugParser.actions.containsKey(token)) {
+            processAction(token, bugParser);
         } else {
             throw new BugParserException(String.format("Unrecognized command on line %d: %s", lineNumber, token));
         }
@@ -128,14 +95,14 @@ public class BugParser {
     /*
     method iterates through each character in 'label' string
     for each character, checks if it's a valid label character:
-        1. char is uppercase (A-Z)
-        2. char is a digit (0-9)
-        3. char is an underscore (_)
+        1. char is not uppercase (A-Z)
+        2. char is a not digit (0-9)
+        3. char is not an underscore (_)
     */
     private void validateLabels(String label, int lineNumber) throws BugParserException {
         for (int i = 0; i < label.length(); i++) {
             char c = label.charAt(i);
-            if (!Character.isUpperCase(c) && !Character.isDigit(c) && c != '_') {
+            if ((i == 0 && Character.isUpperCase(c)) || Character.isDigit(c) || c == '_') {
                 throw new BugParserException(String.format("Invalid label name on line %d: %s", lineNumber, label));
             }
         }
@@ -153,8 +120,6 @@ public class BugParser {
         return line.split("\\s+");
     }
 
-    // not sure if this will remove # from the right spot?
-    // this removes # if it's found at index 0
     private String removeComments(String line) {
         return line.split("#")[0].trim();
     }
@@ -165,6 +130,8 @@ public class BugParser {
      */
     private void parseLabel(String token, int lineNumber) throws BugParserException {
         String label = token;
+        System.out.println("label" + label);
+        System.out.println("line number" + lineNumber);
         validateLabels(label, lineNumber);
         checkForDuplicateLabel(label, lineNumber);
 
@@ -186,30 +153,11 @@ public class BugParser {
     }
 
 
-//    private void processFlowControl(String tokens, int lineNumber) throws BugParserException {
-//        //check if statement has correct number of tokens
-//        if (tokens.length != 2) {
-//            throw new BugParserException(String.format("Incorrect number of tokens on line %d", lineNumber));
-//        }
-//        //extract command and target from tokens
-//        String command = tokens[0];
-//        String target = tokens[1];
-//
-//        //validate label names, check for duplicates
-//        validateLabels(target, lineNumber);
-//
-//        //add bytecode representation of the control command
-//        bytecode.add(controls.get(command));
-//        //add the destination position to the bytecode
-//        bytecode.add(getDestination(target));
-//    }
-
-    private void processFlowControl(String token, String target, int lineNumber) throws BugParserException {
+    private void processFlowControl(String token, String target, int lineNumber, BugParser bugParser) throws BugParserException {
         // Validate the target label
         validateLabels(target, lineNumber);
-
-        // Add the bytecode representation of the control command
-        bytecode.add(controls.get(token));
+        //check if bugparser.controls contains token or bugparser.actions contains token
+        //        bytecode.add(controls.get(token));
 
         // Add the destination position to the bytecode
         bytecode.add(getDestination(target));
@@ -242,8 +190,8 @@ public class BugParser {
         }
     }
 
-    private void processAction(String tokens) {
-        bytecode.add(actions.get(tokens));
+    private void processAction(String tokens, BugParser bugParser) {
+        bytecode.add(bugParser.actions.get(tokens));
     }
 
     /*
@@ -288,19 +236,8 @@ public class BugParser {
         if so, it sets the last command in the bytecode to 0.
         ** assume the last position is invalid/dangling.
      */
-//    private void ensureValidLabelPosition() {
-//        int size = bytecode.size();
-//
-//        if (size >= 2) {
-//            int penultimateCommand = bytecode.get(size - 2);
-//            int ultimateCommand = bytecode.get(size - 1);
-//
-//            if (controls.containsValue(penultimateCommand) && ultimateCommand >= size) {
-//                bytecode.set(size - 1, 0);
-//            }
-//        }
-//    }
-    private void ensureValidLabelPosition() {
+
+    private void ensureValidLabelPosition(BugParser bugParser) {
         int size = bytecode.size();
 
         if (size >= 2) {
@@ -308,7 +245,7 @@ public class BugParser {
             Integer ultimateCommand = bytecode.get(size - 1);
 
             // Check if penultimateCommand or ultimateCommand is null before accessing intValue()
-            if (penultimateCommand != null && ultimateCommand != null && controls.containsValue(penultimateCommand) && ultimateCommand.intValue() >= size) {
+            if (penultimateCommand != null && ultimateCommand != null && bugParser.controls.containsValue(penultimateCommand) && ultimateCommand.intValue() >= size) {
                 bytecode.set(size - 1, 0);
             }
         }
@@ -318,9 +255,9 @@ public class BugParser {
     /*
         method purpose: checks if there is an infinite loop
      */
-    private void checkForInfiniteLoop() throws BugParserException {
-        for (int trueCondition : controls.values()) {
-            if (hasCycle(trueCondition)) {
+    private void checkForInfiniteLoop(BugParser bugParser) throws BugParserException {
+        for (int trueCondition : bugParser.controls.values()) {
+            if (hasCycle(trueCondition, bugParser)) {
                 throw new BugParserException("Infinite loop detected");
             }
         }
@@ -329,7 +266,7 @@ public class BugParser {
     /*
         method purpose: checks if there is an infinite cycle in the bytecode
      */
-    private boolean hasCycle(int trueCondition) {
+    private boolean hasCycle(int trueCondition, BugParser bugParser) {
         Set<Integer> visited = new HashSet<>();
         int currentCommand = trueCondition;
 
@@ -339,7 +276,7 @@ public class BugParser {
             }
 
             // Update current command based on control flow
-            currentCommand = getNextCommand(currentCommand);
+            currentCommand = getNextCommand(currentCommand, bugParser);
         }
 
         return false;  // No cycle detected
@@ -348,15 +285,15 @@ public class BugParser {
     /*
         method purpose: returns the next command based on control flow
      */
-    private int getNextCommand(int currentCommand) {
+    private int getNextCommand(int currentCommand, BugParser bugParser) {
         // find the index of the current command in the bytecode
         int i = bytecode.indexOf(currentCommand);
 
         // check if the current command is in the bytecode
         if (i != -1) {
             // get the values associated with control flow conditions
-            int trueCondition = controls.get("trueCondition");
-            int gotoCommand = controls.get("goto");
+            int trueCondition = bugParser.controls.get("trueCondition");
+            int gotoCommand = bugParser.controls.get("goto");
 
             // check if the current command is a trueCondition or goto command
             if (List.of(trueCondition, gotoCommand).contains(currentCommand)) {
@@ -372,13 +309,12 @@ public class BugParser {
         return -1;
     }
 
-
     /*
         method purpose: returns the control by value;
      */
-    private String getControlByValue(int trueCondition) {
+    private String getControlByValue(int trueCondition, BugParser bugParser) {
         // iterate through the controls map
-        for (Map.Entry<String, Integer> entry : controls.entrySet()) {
+        for (Map.Entry<String, Integer> entry : bugParser.controls.entrySet()) {
             // check if the value associated with the current entry matches the provided trueCondition
             if (entry.getValue() == trueCondition) {
                 // return the key (control) associated with the matching value

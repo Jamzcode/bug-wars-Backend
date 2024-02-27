@@ -21,6 +21,11 @@ public class Battleground {
     private String name;
     private Entity[][] grid;
     private final Map<Integer, Action> actions = new HashMap<>();
+
+    private final List<Integer> actionsToBeTaken = new ArrayList<>();
+    //List of Action Codes - 0, 31, 0, 29
+    //Create a static map that maps the code to the action
+        //New Hashmap({Map<Integer, Action>)
     private int index;
 
     public Battleground(String name, Entity[][] grid, List<Bug> bugs) {
@@ -58,6 +63,7 @@ public class Battleground {
             actionsTaken.add(new ActionSummary(bug.getCoords(), action));
             actions.get(action).run(bug);
         }
+        //To-do: Update grid
         return new TickSummary(actionsTaken, lastSwarmStanding());
     }
 
@@ -69,7 +75,8 @@ public class Battleground {
         actions.put(13, bug -> att(bug));
         actions.put(14, bug -> eat(bug));
     }
-
+//List of actions would be new ArrayList(0, 10, 11, 12, 13, 14)
+    //for each action, use actionMap.get(action)
     private void noop(Bug bug) {
         // do nothing!
     }
@@ -132,7 +139,8 @@ public class Battleground {
                 bugFrontCoords,
                 bug.getSwarm(),
                 bug.getBytecode(),
-                bug.getDirection() // Assuming the direction remains the same
+                bug.getDirection(), // Assuming the direction remains the same
+                bug.getBugType()
         );
 
         // Update the grid and add the new Bug instance to the list of bugs
@@ -159,7 +167,6 @@ public class Battleground {
     private boolean lastSwarmStanding() {
         return bugs.stream().map(Bug::getSwarm).distinct().limit(2).count() <= 1;
     }
-
     @FunctionalInterface
     interface Action {
         void run(Bug bug);

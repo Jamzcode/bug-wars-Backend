@@ -19,6 +19,7 @@ public class BugAssemblyCommands {
     public static Map<String, Integer> getControls() {
         Map<String, Integer> commands = new HashMap<>();
 
+        commands.put(":START", 29);
         commands.put("ifEnemy", 30);
         commands.put("ifAlly", 31);
         commands.put("ifFood", 32);

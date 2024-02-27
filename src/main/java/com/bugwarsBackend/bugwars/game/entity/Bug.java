@@ -16,11 +16,12 @@ public class Bug implements Entity {
     private int index = 0;
     private int bugType;
 
-    public Bug(Point coords, int swarm, int[] bytecode, Direction direction) {
+    public Bug(Point coords, int swarm, int[] bytecode, Direction direction, int bugType) {
         this.coords = coords;
         this.swarm = swarm;
         this.bytecode = bytecode;
         this.direction = direction;
+        this.bugType = bugType;
 
         loadCommands();
     }

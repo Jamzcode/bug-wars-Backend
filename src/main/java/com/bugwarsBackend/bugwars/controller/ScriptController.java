@@ -2,9 +2,14 @@ package com.bugwarsBackend.bugwars.controller;
 
 import com.bugwarsBackend.bugwars.dto.request.ScriptRequest;
 import com.bugwarsBackend.bugwars.dto.response.ScriptName;
+import com.bugwarsBackend.bugwars.game.Battleground;
+import com.bugwarsBackend.bugwars.game.TickSummary;
+import com.bugwarsBackend.bugwars.game.setup.BattlegroundFactory;
 import com.bugwarsBackend.bugwars.model.Script;
 import com.bugwarsBackend.bugwars.service.ScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +44,23 @@ public class ScriptController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public Script createScript(@RequestBody ScriptRequest request, Principal principal) {
+//        Resource mapResource = new ClassPathResource("maps/tunnel.txt");
+//        BattlegroundFactory battlegroundFactory = new BattlegroundFactory(mapResource);
+//        Battleground battleground = battlegroundFactory.printGrid();
+//
+//        // Print the initial state
+//        battleground.print();
+//
+//        // Simulate ticks and print after each tick
+//        for (int i = 0; i < 5; i++) {
+//            TickSummary tickSummary = battleground.nextTick();
+//            System.out.println("Tick: " + (i + 1));
+//            battleground.print();
+//            if (tickSummary.isGameOver()) {
+//                System.out.println("Game over!");
+//                break;
+//            }
+//        }
         return scriptService.createScript(request, principal);
     }
 
@@ -53,4 +75,5 @@ public class ScriptController {
     public void deleteScriptById(@PathVariable Long id, Principal principal) {
         scriptService.deleteScriptById(id, principal);
     }
+
 }
