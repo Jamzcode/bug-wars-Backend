@@ -19,7 +19,6 @@ public class Battleground {
     private List<Bug> bugs;
     private String name;
     private Entity[][] grid;
-
     private final Map<Integer, Action> actions = new HashMap<>();
 
     private final List<Integer> actionsToBeTaken = new ArrayList<>();
@@ -84,12 +83,14 @@ public class Battleground {
                 if (grid[i][j] instanceof Bug) {
                     Bug bug = (Bug) grid[i][j];
                     Point newCoords = bug.getCoords();
-                    if (newCoords != null) { // Check if coordinates are not null
-                        System.out.println("Coords: " + newCoords);
-                        grid[newCoords.y][newCoords.x] = bug;
-                    } else {
-                        System.out.println("Bug coordinates are null.");
+                    if (newCoords == null) { // Check if coordinates are null
+                        // Initialize bug coordinates if they are null
+                        bug.setCoords(new Point(j, i)); // Assuming (x, y) convention
+                        bug.setDirection(Direction.NORTH); // Set the initial direction
+                        newCoords = bug.getCoords(); // Update newCoords
                     }
+                    System.out.println("Coords: " + newCoords);
+                    grid[newCoords.y][newCoords.x] = bug;
                 } else if (grid[i][j] instanceof Food || grid[i][j] instanceof Wall || grid[i][j] instanceof EmptySpace) {
                     // Food, Wall, or EmptySpace logic (no change needed)
                     // These entities don't move, so no need to update their positions in the grid
@@ -97,6 +98,8 @@ public class Battleground {
             }
         }
     }
+
+
 
 
     private void init() {
@@ -206,6 +209,7 @@ public class Battleground {
             System.out.println("Coords: " + coords);
             return grid[y][x];
         } else {
+            System.out.println("Coordinates are out of bounds from getEntityAtCoords method.");
             // Coordinates are out of bounds, return null or handle appropriately
             return null;
         }

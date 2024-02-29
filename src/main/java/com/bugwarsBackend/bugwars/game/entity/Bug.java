@@ -41,7 +41,7 @@ public class Bug implements Entity {
 
     public Bug(int bugType, int[] bytecode) {
         this.bugType = bugType;
-        this.coords = new Point(0, 0);
+        this.coords = new Point();
         this.direction = Direction.NORTH;
         this.bytecode = bytecode;
     }
@@ -59,6 +59,7 @@ public class Bug implements Entity {
         int result = -1;
 
         if (commands.containsKey(bytecode[index])) {
+            System.out.println("Bytecode: " + bytecode[index]);
             Command command = commands.get(bytecode[index]);
             boolean success = command.execute(frontEntity);
 
