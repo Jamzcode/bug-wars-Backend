@@ -26,14 +26,26 @@ public class Bug implements Entity {
         loadCommands();
     }
 
+    public Bug(int swarm, Point coords) {
+        this.swarm = swarm;
+        this.coords = coords;
+    }
+
+    public Bug(int swarm) {
+        this.swarm = swarm;
+    }
+
     public Direction getDirection() {
         return direction;
     }
 
-    public Bug(int bugType) {
+    public Bug(int bugType, int[] bytecode) {
         this.bugType = bugType;
-        this.direction = Direction.NORTH; // Assuming NORTH is the default direction
+        this.coords = new Point(0, 0);
+        this.direction = Direction.NORTH;
+        this.bytecode = bytecode;
     }
+
     private void loadCommands() {
         commands.put(30, this::ifEnemy);
         commands.put(31, this::ifAlly);

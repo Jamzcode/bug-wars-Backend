@@ -2,7 +2,6 @@ package com.bugwarsBackend.bugwars.service;
 
 import com.bugwarsBackend.bugwars.game.Battleground;
 import com.bugwarsBackend.bugwars.game.TickSummary;
-import com.bugwarsBackend.bugwars.game.entity.Entity;
 import com.bugwarsBackend.bugwars.game.setup.BattlegroundFactory;
 import com.bugwarsBackend.bugwars.model.Script;
 import com.bugwarsBackend.bugwars.model.User;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class GameService {
 
@@ -26,30 +26,35 @@ public class GameService {
     UserRepository userRepository;
 
     public static final int MAX_TICKS = 50;
-    public void startGame() {
 
+    public void startGame(String username) {
+        // Retrieve user from the database
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user == null) {
+            // Handle case where user is not found
+            return;
+        }
+
+        // Retrieve scripts for the user
+        List<Script> scripts = scriptRepository.getScriptsByUser(user.get());
+
+        // Load battleground and print the initial state
         Resource mapResource = new ClassPathResource("maps/tunnel.txt");
         BattlegroundFactory battlegroundFactory = new BattlegroundFactory(mapResource);
         Battleground battleground = battlegroundFactory.printGrid();
-
-        // Print the initial state
         battleground.print();
 
-		// Simulate ticks and print after each tick
-
-        //TO-DO: Connect to Database
-        //Dummy data
+        // Simulate ticks and print after each tick
         int[] dummyTicks = {0};
-		for (int i = 0; i < dummyTicks.length; i++) {
-			TickSummary tickSummary = battleground.nextTick();
-			System.out.println("Tick: " + (i + 1));
-            //To-do: Update battleground grid based on next action
+        for (int i = 0; i < dummyTicks.length; i++) {
+            TickSummary tickSummary = battleground.nextTick();
+            System.out.println("Tick: " + (i + 1));
             battleground.print();
-			if (tickSummary.isGameOver()) {
-				System.out.println("Game over!");
-				break;
-			}
-		}
+            if (tickSummary.isGameOver()) {
+                System.out.println("Game over!");
+                break;
+            }
+        }
     }
-
 }
+

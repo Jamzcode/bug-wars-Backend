@@ -81,9 +81,9 @@ public class BattlegroundFactory {
             for (int j = 0; j < battleground.getGrid()[i].length; j++) {
                 System.out.print(battleground.getGrid()[i][j] + " ");
             }
-            System.out.println(); // Move to the next line after printing each row
+            System.out.println();
         }
-        return battleground; // Return the battleground instance
+        return battleground;
     }
 }
 

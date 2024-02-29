@@ -5,10 +5,6 @@ import java.awt.*;
 public enum Direction {
     NORTH, EAST, SOUTH, WEST;
 
-    public Direction faceNorth() {
-        return NORTH;
-    }
-
     public Direction turnLeft() {
         return switch (this) {
             case NORTH -> WEST;

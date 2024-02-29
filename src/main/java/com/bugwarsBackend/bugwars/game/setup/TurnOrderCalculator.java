@@ -5,13 +5,13 @@ import com.bugwarsBackend.bugwars.game.entity.Bug;
 import com.bugwarsBackend.bugwars.game.entity.Entity;
 
 import java.awt.*;
-import java.util.List;
-
 import java.util.*;
+import java.util.List;
 
 public class TurnOrderCalculator {
     private final Entity[][] grid;
     private final List<Swarm> swarms;
+    private Point coords;
 
     public TurnOrderCalculator(Entity[][] grid, List<Swarm> swarms) {
         this.grid = grid;
@@ -26,30 +26,30 @@ public class TurnOrderCalculator {
 
     private Map<Double, List<Bug>> groupBugsByDistance() {
         Map<Double, List<Bug>> distanceBuckets = new HashMap<>();
-
-        // iterate through the grid to group bugs by distance
         for (Entity[] entities : grid) {
             for (Entity e : entities) {
                 if (e instanceof Bug) {
                     Bug bug = (Bug) e;
-                    double distance = calculateDistance(bug.getCoords());
-                    distanceBuckets.computeIfAbsent(distance, k -> new ArrayList<>()).add(bug);
+                    if (bug.getCoords() != null) {
+                        double distance = calculateDistance(bug.getCoords());
+                        distanceBuckets.computeIfAbsent(distance, k -> new ArrayList<>()).add(bug);
+                    } else {
+                        System.out.println("Bug coordinates are: " + bug.getCoords());
+                    }
                 }
             }
         }
         return distanceBuckets;
     }
 
+
     private List<Bug> findPairs(Map<Double, List<Bug>> distanceBuckets) {
         List<Bug> roughOrder = new ArrayList<>();
 
-        // iterate through distance buckets to find pairs
         for (List<Bug> bugs : distanceBuckets.values()) {
             if (bugs.size() == 2) {
-                // if there are exactly two bugs, add them directly
                 roughOrder.addAll(bugs);
             } else {
-                // If more than two bugs, attempt to find pairs
                 for (int i = 0; i < bugs.size(); i++) {
                     Bug bug1 = bugs.get(i);
                     if (!roughOrder.contains(bug1)) {
@@ -57,7 +57,9 @@ public class TurnOrderCalculator {
                             Bug bug2 = bugs.get(j);
                             if (!roughOrder.contains(bug2) && areAligned(bug1, bug2)) {
                                 roughOrder.add(bug1);
+                                System.out.println("Added bug1: " + bug1);
                                 roughOrder.add(bug2);
+                                System.out.println("Added bug2: " + bug2);
                                 break;
                             }
                         }
@@ -69,7 +71,6 @@ public class TurnOrderCalculator {
     }
 
     private List<Bug> sortTurnOrder(List<Bug> roughOrder) {
-        // sort the turn order based on swarm affiliations
         roughOrder.sort(Comparator.comparingInt(Bug::getSwarm));
         return roughOrder;
     }
@@ -81,8 +82,7 @@ public class TurnOrderCalculator {
     }
 
     private boolean areAligned(Bug bug1, Bug bug2) {
-        // check if bugs are aligned either vertically or horizontally
-        return bug1.getCoords().x == bug2.getCoords().x || bug1.getCoords().y == bug2.getCoords().y;
+        boolean aligned = bug1.getCoords().x == bug2.getCoords().x || bug1.getCoords().y == bug2.getCoords().y;
+        return aligned;
     }
 }
-

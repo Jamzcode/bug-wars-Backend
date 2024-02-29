@@ -1,8 +1,7 @@
 package com.bugwarsBackend.bugwars.game;
 
-import com.bugwarsBackend.bugwars.game.entity.Bug;
-import com.bugwarsBackend.bugwars.game.entity.Entity;
-import com.bugwarsBackend.bugwars.game.entity.Food;
+import com.bugwarsBackend.bugwars.game.entity.*;
+import com.bugwarsBackend.bugwars.game.setup.TurnOrderCalculator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +19,7 @@ public class Battleground {
     private List<Bug> bugs;
     private String name;
     private Entity[][] grid;
+
     private final Map<Integer, Action> actions = new HashMap<>();
 
     private final List<Integer> actionsToBeTaken = new ArrayList<>();
@@ -38,6 +38,7 @@ public class Battleground {
         }
 
         init();
+        updateGrid();
     }
 
     public void print() {
@@ -54,8 +55,14 @@ public class Battleground {
     }
 
     public TickSummary nextTick() {
+        // Calculate turn order
+        TurnOrderCalculator turnOrderCalculator = new TurnOrderCalculator(grid, null); // You might need to pass swarms if required
+        List<Bug> turnOrder = turnOrderCalculator.calculateTurnOrder();
+        System.out.print("Turn order: " + turnOrder);
+
+        // Execute actions in the calculated turn order
         List<ActionSummary> actionsTaken = new ArrayList<>();
-        for (Bug bug : bugs) {
+        for (Bug bug : turnOrder) {
             Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
             int action = bug.determineAction(getEntityAtCoords(bugFrontCoords));
             if (!actions.containsKey(action)) throw new RuntimeException("Invalid action: " + action);
@@ -63,9 +70,34 @@ public class Battleground {
             actionsTaken.add(new ActionSummary(bug.getCoords(), action));
             actions.get(action).run(bug);
         }
-        //To-do: Update grid
+
+        // Update the grid based on the actions taken
+        updateGrid();
+
         return new TickSummary(actionsTaken, lastSwarmStanding());
     }
+
+
+    private void updateGrid() {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] instanceof Bug) {
+                    Bug bug = (Bug) grid[i][j];
+                    Point newCoords = bug.getCoords();
+                    if (newCoords != null) { // Check if coordinates are not null
+                        System.out.println("Coords: " + newCoords);
+                        grid[newCoords.y][newCoords.x] = bug;
+                    } else {
+                        System.out.println("Bug coordinates are null.");
+                    }
+                } else if (grid[i][j] instanceof Food || grid[i][j] instanceof Wall || grid[i][j] instanceof EmptySpace) {
+                    // Food, Wall, or EmptySpace logic (no change needed)
+                    // These entities don't move, so no need to update their positions in the grid
+                }
+            }
+        }
+    }
+
 
     private void init() {
         actions.put(0, bug -> noop(bug));
@@ -85,10 +117,15 @@ public class Battleground {
         Entity destination = getEntityAtCoords(bugFrontCoords);
         if (destination != null) return;
 
-        grid[bugFrontCoords.y][bugFrontCoords.x] = bug;
-        grid[bug.getCoords().y][bug.getCoords().x] = null;
-        bug.setCoords(bugFrontCoords);
+        if (bugFrontCoords != null) {
+            grid[bugFrontCoords.y][bugFrontCoords.x] = bug;
+            grid[bug.getCoords().y][bug.getCoords().x] = null;
+            bug.setCoords(bugFrontCoords);
+        } else {
+            System.out.println("Bug front coordinates are null.");
+        }
     }
+
     private void rotr(Bug bug) {
         bug.setDirection(bug.getDirection().turnRight());
     }
@@ -161,9 +198,18 @@ public class Battleground {
     }
 
     private Entity getEntityAtCoords(Point coords) {
-        return grid[coords.y][coords.x];
-    }
+        int x = coords.x;
+        int y = coords.y;
 
+        // Check if coordinates are within the bounds of the grid
+        if (x >= 0 && x < grid[0].length && y >= 0 && y < grid.length) {
+            System.out.println("Coords: " + coords);
+            return grid[y][x];
+        } else {
+            // Coordinates are out of bounds, return null or handle appropriately
+            return null;
+        }
+    }
     private boolean lastSwarmStanding() {
         return bugs.stream().map(Bug::getSwarm).distinct().limit(2).count() <= 1;
     }
