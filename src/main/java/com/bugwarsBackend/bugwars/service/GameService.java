@@ -12,6 +12,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,9 +28,10 @@ public class GameService {
 
     public static final int MAX_TICKS = 50;
 
-    public void startGame(String username) {
+    public void startGame(Long id, Principal principal) {
         // Retrieve user from the database
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsername(principal.getName());
+        System.out.println("User" + principal.getName());
         if (user == null) {
             // Handle case where user is not found
             return;
@@ -37,7 +39,9 @@ public class GameService {
 
         // Retrieve scripts for the user
         List<Script> scripts = scriptRepository.getScriptsByUser(user.get());
-
+        System.out.println("Scripts: " + scripts);
+        Script userSelectScript = scripts.stream().filter(script -> script.getId().equals(id)).findFirst().orElse(null);
+        System.out.println("This is user's script" + userSelectScript);
         // Load battleground and print the initial state
         Resource mapResource = new ClassPathResource("maps/tunnel.txt");
         BattlegroundFactory battlegroundFactory = new BattlegroundFactory(mapResource);
@@ -47,7 +51,7 @@ public class GameService {
         // Simulate ticks and print after each tick
         int[] dummyTicks = {0};
         for (int i = 0; i < dummyTicks.length; i++) {
-            TickSummary tickSummary = battleground.nextTick();
+            TickSummary tickSummary = battleground.nextTick(userSelectScript);
             System.out.println("Tick: " + (i + 1));
             battleground.print();
             if (tickSummary.isGameOver()) {

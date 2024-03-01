@@ -44,23 +44,6 @@ public class ScriptController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public Script createScript(@RequestBody ScriptRequest request, Principal principal) {
-//        Resource mapResource = new ClassPathResource("maps/tunnel.txt");
-//        BattlegroundFactory battlegroundFactory = new BattlegroundFactory(mapResource);
-//        Battleground battleground = battlegroundFactory.printGrid();
-//
-//        // Print the initial state
-//        battleground.print();
-//
-//        // Simulate ticks and print after each tick
-//        for (int i = 0; i < 5; i++) {
-//            TickSummary tickSummary = battleground.nextTick();
-//            System.out.println("Tick: " + (i + 1));
-//            battleground.print();
-//            if (tickSummary.isGameOver()) {
-//                System.out.println("Game over!");
-//                break;
-//            }
-//        }
         return scriptService.createScript(request, principal);
     }
 

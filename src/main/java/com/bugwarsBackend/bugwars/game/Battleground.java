@@ -2,6 +2,7 @@ package com.bugwarsBackend.bugwars.game;
 
 import com.bugwarsBackend.bugwars.game.entity.*;
 import com.bugwarsBackend.bugwars.game.setup.TurnOrderCalculator;
+import com.bugwarsBackend.bugwars.model.Script;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -53,7 +54,7 @@ public class Battleground {
         }
     }
 
-    public TickSummary nextTick() {
+    public TickSummary nextTick(Script script) {
         // Calculate turn order
         TurnOrderCalculator turnOrderCalculator = new TurnOrderCalculator(grid, null); // You might need to pass swarms if required
         List<Bug> turnOrder = turnOrderCalculator.calculateTurnOrder();
@@ -63,7 +64,8 @@ public class Battleground {
         List<ActionSummary> actionsTaken = new ArrayList<>();
         for (Bug bug : turnOrder) {
             Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
-            int action = bug.determineAction(getEntityAtCoords(bugFrontCoords));
+            System.out.println("Bug front coords: " + bugFrontCoords);
+            int action = bug.determineAction(getEntityAtCoords(bugFrontCoords), script);
             if (!actions.containsKey(action)) throw new RuntimeException("Invalid action: " + action);
 
             actionsTaken.add(new ActionSummary(bug.getCoords(), action));
@@ -86,7 +88,7 @@ public class Battleground {
                     if (newCoords == null) { // Check if coordinates are null
                         // Initialize bug coordinates if they are null
                         bug.setCoords(new Point(j, i)); // Assuming (x, y) convention
-                        bug.setDirection(Direction.NORTH); // Set the initial direction
+                        bug.setDirection(Direction.NORTH);
                         newCoords = bug.getCoords(); // Update newCoords
                     }
                     System.out.println("Coords: " + newCoords);
@@ -178,7 +180,7 @@ public class Battleground {
         Bug newSpawn = new Bug(
                 bugFrontCoords,
                 bug.getSwarm(),
-                bug.getBytecode(),
+                bug.getUserBytecode(),
                 bug.getDirection(), // Assuming the direction remains the same
                 bug.getBugType()
         );
@@ -189,15 +191,15 @@ public class Battleground {
         index++;
 
         // Update the bug's properties to reflect reproduction
-        bug.setBytecode(doubleBytecode(bug.getBytecode()));
+        bug.setUserBytecode(doubleUserBytecode(bug.getUserBytecode()));
     }
 
     // Helper method to double the bytecode of a bug
-    private int[] doubleBytecode(int[] bytecode) {
-        int[] newBytecode = new int[bytecode.length * 2];
-        System.arraycopy(bytecode, 0, newBytecode, 0, bytecode.length);
-        System.arraycopy(bytecode, 0, newBytecode, bytecode.length, bytecode.length);
-        return newBytecode;
+    private int[] doubleUserBytecode(int[] UserBytecode) {
+        int[] newUserBytecode = new int[UserBytecode.length * 2];
+        System.arraycopy(UserBytecode, 0, newUserBytecode, 0, UserBytecode.length);
+        System.arraycopy(UserBytecode, 0, newUserBytecode, UserBytecode.length, UserBytecode.length);
+        return newUserBytecode;
     }
 
     private Entity getEntityAtCoords(Point coords) {

@@ -8,13 +8,14 @@ import com.bugwarsBackend.bugwars.parser.BugParser;
 import com.bugwarsBackend.bugwars.parser.BugParserException;
 import com.bugwarsBackend.bugwars.repository.ScriptRepository;
 import com.bugwarsBackend.bugwars.repository.UserRepository;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,7 +81,7 @@ public class ScriptService {
 
         } catch (BugParserException e) {
             script.setBytecodeValid(false);
-            script.setBytecode("[]");
+            script.setBytecode(new int[]{});
         }
         script.setName(request.getName());
         script.setRaw(request.getRaw());
@@ -145,14 +146,11 @@ public class ScriptService {
         }
     }
 
-    private String formatBytecode(List<Integer> byteCode) {
+
+    public static int[] formatBytecode(@NotBlank @Size(max = 10000) List<Integer> byteCode) {
         if (byteCode == null) {
-            return "Bytecode is null";
+            throw new IllegalArgumentException("Bytecode is null");
         }
-        return String.format("[%s]", byteCode.stream().map(Object::toString).collect(Collectors.joining(", ")));
+        return byteCode.stream().mapToInt(Integer::intValue).toArray();
     }
-
-
-
-
 }

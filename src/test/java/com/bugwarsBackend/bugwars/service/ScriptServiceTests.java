@@ -35,10 +35,10 @@ import static org.mockito.Mockito.*;
 public class ScriptServiceTests {
 
     private final User USER = new User("usernameTest", "emailTest", "passwordTest");
-    private final Script SCRIPT_1 = new Script(1L, USER, "side to side", ":START rotr rotl rotl rotr", "11 12 11 12 11 12", true);
-    private final Script SCRIPT_2 = new Script(2L, USER, "move attack", ":START mov att", "10 13 10 13 10 13", true);
-    private final Script SCRIPT_3 = new Script(3L, USER, "move and right", ":START mov rotr", "10 10 10 10 10 10 10 11", false);
-    private final Script SCRIPT_4 = new Script(4L, USER, "move in line", ":START mov", "10 10 10 10 10 10 10", true);
+    private final Script SCRIPT_1 = new Script(1L, USER, "side to side", ":START rotr rotl rotl rotr", new int[]{11, 12, 11, 12, 11, 12}, true);
+    private final Script SCRIPT_2 = new Script(2L, USER, "move attack", ":START mov att", new int[]{10, 13, 10, 13, 10, 13}, true);
+    private final Script SCRIPT_3 = new Script(3L, USER, "move and right", ":START mov rotr", new int[]{10, 10, 10, 10, 10, 10, 10, 11}, false);
+    private final Script SCRIPT_4 = new Script(4L, USER, "move in line", ":START mov", new int[]{10, 10, 10, 10, 10, 10, 10}, true);
 
     @Mock
     private UserRepository userRepository;

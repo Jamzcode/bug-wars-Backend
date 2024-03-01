@@ -13,9 +13,7 @@ public class BugWarsApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = SpringApplication.run(BugWarsApplication.class, args);
-//		SpringApplication.run(BugWarsApplication.class, args);
-		GameService gameService = applicationContext.getBean(GameService.class);
-		gameService.startGame("test");
+		SpringApplication.run(BugWarsApplication.class, args);
 	}
 }
 

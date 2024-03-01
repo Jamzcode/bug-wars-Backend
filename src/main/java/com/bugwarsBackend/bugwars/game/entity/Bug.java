@@ -1,6 +1,9 @@
 package com.bugwarsBackend.bugwars.game.entity;
 
+import com.bugwarsBackend.bugwars.model.Script;
+import com.bugwarsBackend.bugwars.service.ScriptService;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -12,14 +15,17 @@ public class Bug implements Entity {
     private int swarm;
     private Point coords;
     private Direction direction;
-    private int[] bytecode;
+    private int[] userBytecode;
     private int index = 0;
     private int bugType;
 
-    public Bug(Point coords, int swarm, int[] bytecode, Direction direction, int bugType) {
+    @Autowired
+    ScriptService scriptService;
+
+    public Bug(Point coords, int swarm, int[] userBytecode, Direction direction, int bugType) {
         this.coords = coords;
         this.swarm = swarm;
-        this.bytecode = bytecode;
+        this.userBytecode = userBytecode;
         this.direction = direction;
         this.bugType = bugType;
 
@@ -31,19 +37,32 @@ public class Bug implements Entity {
         this.coords = coords;
     }
 
+    public Bug(Direction direction) {
+        this.direction = direction;
+    }
+
+    public Bug(int[] userBytecode) {
+        this.userBytecode = userBytecode;
+    }
     public Bug(int swarm) {
         this.swarm = swarm;
     }
+
+
+    public Bug(Point coords) {
+        this.coords = coords;
+    }
+
 
     public Direction getDirection() {
         return direction;
     }
 
-    public Bug(int bugType, int[] bytecode) {
+    public Bug(int bugType, int[] userBytecode) {
         this.bugType = bugType;
         this.coords = new Point();
         this.direction = Direction.NORTH;
-        this.bytecode = bytecode;
+        this.userBytecode = userBytecode;
     }
 
     private void loadCommands() {
@@ -55,28 +74,29 @@ public class Bug implements Entity {
         commands.put(35, this::_goto);
     }
 
-    public int determineAction(Entity frontEntity) {
+    public int determineAction(Entity frontEntity, Script script) {
         int result = -1;
-
-        if (commands.containsKey(bytecode[index])) {
-            System.out.println("Bytecode: " + bytecode[index]);
-            Command command = commands.get(bytecode[index]);
+        System.out.println(script.getBytecode());
+        int[] userBytecode  = script.getBytecode();
+        if (commands.containsKey(userBytecode[index])) {
+            System.out.println("userBytecode: " + userBytecode[index]);
+            Command command = commands.get(userBytecode[index]);
             boolean success = command.execute(frontEntity);
 
             if (success) {
-                index = bytecode[index + 1];
+                index = userBytecode[index + 1];
             } else {
                 incrementIndex(2);
             }
         } else {
-            result = bytecode[index];
+            result = userBytecode[index];
             incrementIndex(1); // Increment the index here
         }
         return result;
     }
 
     private void incrementIndex(int increment) {
-        index = (index + increment) % bytecode.length;
+        index = (index + increment) % userBytecode.length;
     }
 
     private boolean ifEnemy(Entity frontEntity) {

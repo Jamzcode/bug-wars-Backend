@@ -38,7 +38,7 @@ public class Script {
     @NotBlank
     @Size(max = 10000)
     @Column(name = "bytecode", length = 10000)
-    private String bytecode;
+    private int[] bytecode;
 
     @Column(name = "is_bytecode_valid")
     private boolean isBytecodeValid;
