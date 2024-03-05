@@ -21,4 +21,4 @@ VALUES
     ((SELECT id FROM users WHERE username = 'spider_bug'), 'Venom Strike', 'Script 2',
     '{33, 5, 0, 35, 0, 12, 35, 0}', true),
     ((SELECT id FROM users WHERE username = 'test'), 'Spider Strike', 'Script 3',
-     '{13, 13, 32, 9, 10, 11, 12, 35, 9, 14, 11, 11, 35, 0}', true);
+    '{13, 13, 32, 9, 10, 11, 12, 35, 9, 14, 11, 11, 35, 0}', true);
