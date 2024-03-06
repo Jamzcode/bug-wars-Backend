@@ -76,8 +76,8 @@ public class Bug implements Entity {
 
     public int determineAction(Entity frontEntity, Script script) {
         int result = -1;
-        System.out.println(script.getBytecode());
-        int[] userBytecode  = script.getBytecode();
+        System.out.println("Script: " + script);
+        userBytecode  = script.getBytecode(); //changed int[] to userBytecode that was instantiated at the top
         if (commands.containsKey(userBytecode[index])) {
             System.out.println("userBytecode: " + userBytecode[index]);
             Command command = commands.get(userBytecode[index]);
@@ -89,14 +89,26 @@ public class Bug implements Entity {
                 incrementIndex(2);
             }
         } else {
+            incrementIndex(1); // Moved incrementIndex here to happen before assigning the result
             result = userBytecode[index];
-            incrementIndex(1); // Increment the index here
+
         }
         return result;
     }
 
     private void incrementIndex(int increment) {
-        index = (index + increment) % userBytecode.length;
+        //index = (index + increment) % userBytecode.length;
+
+        if (userBytecode != null && userBytecode.length > 0) {
+            index = (index + increment) % userBytecode.length;
+        } else {
+            throw new IllegalArgumentException("userBytecode is null or empty");
+        }
+
+        if (index >= userBytecode.length) {
+            throw new IllegalArgumentException("index is out of bounds");
+
+        }
     }
 
     private boolean ifEnemy(Entity frontEntity) {

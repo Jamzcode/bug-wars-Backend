@@ -40,7 +40,10 @@ public class GameService {
         // Retrieve scripts for the user
         List<Script> scripts = scriptRepository.getScriptsByUser(user.get());
         System.out.println("Scripts: " + scripts);
-        Script userSelectScript = scripts.stream().filter(script -> script.getId().equals(id)).findFirst().orElse(null);
+        Script userSelectScript = scripts.stream()
+                .filter(script -> script.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Script not found for id: " + id));
         System.out.println("This is user's script" + userSelectScript);
         // Load battleground and print the initial state
         Resource mapResource = new ClassPathResource("maps/tunnel.txt");
