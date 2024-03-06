@@ -43,11 +43,11 @@ public class Battleground {
 
     public void print() {
         for (Entity[] entities : grid) {
-            for (Entity e : entities) {
-                if (e == null) {
+            for (Entity entity : entities) {
+                if (entity == null) {
                     System.out.print(" ");
                 } else {
-                    System.out.print(e);
+                    System.out.print(entity);
                 }
             }
             System.out.println();
@@ -60,7 +60,7 @@ public class Battleground {
         List<Bug> turnOrder = turnOrderCalculator.calculateTurnOrder();
         System.out.print("Turn order: " + turnOrder);
 
-        // Execute actions in the calculated turn order
+        // Execute actions in the turn order
         List<ActionSummary> actionsTaken = new ArrayList<>();
         for (Bug bug : turnOrder) {
             Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
@@ -72,8 +72,9 @@ public class Battleground {
             actions.get(action).run(bug);
         }
 
-        // Update the grid based on the actions taken
         updateGrid();
+
+        print();
 
         return new TickSummary(actionsTaken, lastSwarmStanding());
     }
@@ -100,10 +101,6 @@ public class Battleground {
             }
         }
     }
-
-
-
-
     private void init() {
         actions.put(0, bug -> noop(bug));
         actions.put(10, bug -> mov(bug));

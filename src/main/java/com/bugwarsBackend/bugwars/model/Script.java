@@ -25,17 +25,14 @@ public class Script {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-//    @NotBlank
     @Column(name = "name", length = 100)
     @Size(min = 1, max = 100)
     private String name;
 
-//    @NotBlank
     @Column(name = "raw", length = 10000)
     @Size(max = 10000)
     private String raw;
 
-//    @NotBlank
     @Size(max = 10000)
     @Column(name = "bytecode", length = 10000)
     private int[] bytecode;

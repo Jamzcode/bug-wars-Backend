@@ -45,7 +45,7 @@ public class GameService {
         // Load battleground and print the initial state
         Resource mapResource = new ClassPathResource("maps/tunnel.txt");
         BattlegroundFactory battlegroundFactory = new BattlegroundFactory(mapResource);
-        Battleground battleground = battlegroundFactory.printGrid();
+        Battleground battleground = battlegroundFactory.create();
         battleground.print();
 
         // Simulate ticks and print after each tick
