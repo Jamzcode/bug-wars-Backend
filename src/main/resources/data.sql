@@ -17,15 +17,15 @@ ON CONFLICT (user_id, role_id) DO NOTHING;
 INSERT INTO scripts (user_id, name, raw, bytecode, is_bytecode_valid)
 VALUES
     ((SELECT id FROM users WHERE username = 'spider_bug'), 'Web Weaver',
-    'ifEnemy mov ifFood eat ifWall rotr ifAlly rotr mov _goto noop mov _goto eat _goto',
-    '{30, 10, 32, 14, 34, 11, 31, 11, 10, 35, 0, 10, 35, 0, 14, 35, 0}',
+    'mov eat eat  rotl :ifWall mov mov :ifAlly rotr mov :goto eat mov',
+    '{10, 14, 14, 12, 4, 10, 6, 10, 8, 10}',
     true),
     ((SELECT id FROM users WHERE username = 'spider_bug'), 'Venom Strike',
     'ifEmpty mov noop _goto noop rotl _goto',
     '{33, 10, 0, 35, 0, 12, 35, 0}',
     true),
     ((SELECT id FROM users WHERE username = 'test'), 'Spider Strike',
-    'att att ifFood mov mov rotr _goto ifEnemy mov rotr rotr _goto noop',
-    '{13, 13, 32, 10, 10, 11, 12, 35, 10, 14, 11, 11, 35, 0}',
+    'mov eat eat  rotl :ifWall mov mov :ifAlly rotr mov :goto eat mov',
+    '{10, 14, 14, 12, 4, 10, 6, 10, 8, 10}',
     true);
 
