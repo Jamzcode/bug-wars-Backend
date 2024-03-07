@@ -26,6 +26,6 @@ VALUES
     true),
     ((SELECT id FROM users WHERE username = 'test'), 'Spider Strike',
     'mov eat eat  rotl :ifWall mov mov :ifAlly rotr mov :goto eat mov',
-    '{10, 14, 14, 12, 4, 10, 6, 10, 8, 10}',
+    '{10, 14, 14, 12, 34, 10, 10, 31, 11, 10, 35, 14, 10}',
     true);
 

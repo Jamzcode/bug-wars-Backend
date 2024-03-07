@@ -72,26 +72,31 @@ public class Bug implements Entity {
         commands.put(33, this::ifEmpty);
         commands.put(34, this::ifWall);
         commands.put(35, this::_goto);
+        System.out.println("Commands: " + commands);
     }
 
     public int determineAction(Entity frontEntity, Script script) {
         int result = -1;
         System.out.println("Script: " + script);
         userBytecode  = script.getBytecode(); //changed int[] to userBytecode that was instantiated at the top
-        if (commands.containsKey(userBytecode[index])) {
-            System.out.println("userBytecode: " + userBytecode[index]);
-            Command command = commands.get(userBytecode[index]);
-            boolean success = command.execute(frontEntity);
 
-            if (success) {
-                index = userBytecode[index + 1];
+        loadCommands(); //loaded commands into commands
+
+        for (int i = 0; i < userBytecode.length; i++) {
+            if (commands.containsKey(userBytecode[i])) { //loading commands allows us to compare the userBytecode to the commands
+                System.out.println("userBytecode: " + userBytecode[i]);
+                Command command = commands.get(userBytecode[i]);
+                boolean success = command.execute(frontEntity); //not really sure what this does
+
+                if (success) {
+                    index = userBytecode[i + 1];
+                } else {
+                    incrementIndex(2);
+                }
             } else {
-                incrementIndex(2);
+                result = userBytecode[i];
+                incrementIndex(1); // Moved incrementIndex back here
             }
-        } else {
-            incrementIndex(1); // Moved incrementIndex here to happen before assigning the result
-            result = userBytecode[index];
-
         }
         return result;
     }

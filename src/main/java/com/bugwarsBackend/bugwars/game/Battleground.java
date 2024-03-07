@@ -66,6 +66,7 @@ public class Battleground {
             Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
             System.out.println("Bug front coords: " + bugFrontCoords);
             int action = bug.determineAction(getEntityAtCoords(bugFrontCoords), script);
+            System.out.println("Current action: " + action);
             if (!actions.containsKey(action)) throw new RuntimeException("Invalid action: " + action);
 
             actionsTaken.add(new ActionSummary(bug.getCoords(), action));
