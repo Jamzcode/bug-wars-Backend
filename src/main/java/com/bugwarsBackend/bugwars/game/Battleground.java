@@ -87,17 +87,41 @@ public class Battleground {
     }
 
 
+//    private void updateGrid() {
+//        for (int i = 0; i < grid.length; i++) {
+//            for (int j = 0; j < grid[i].length; j++) {
+//                if (grid[i][j] instanceof Bug) {
+//                    Bug bug = (Bug) grid[i][j];
+//                    Point newCoords = bug.getCoords();
+//                    if (newCoords == null) { // Check if coordinates are null
+//                        // Initialize bug coordinates if they are null
+//                        bug.setCoords(new Point(j, i)); // Assuming (x, y) convention
+//                        bug.setDirection(Direction.NORTH);
+//                        newCoords = bug.getCoords(); // Update newCoords
+//                    }
+//                    System.out.println("New Coords for bug " + bug + ": " + newCoords);
+//                    grid[newCoords.y][newCoords.x] = bug;
+//                } else if (grid[i][j] instanceof Food || grid[i][j] instanceof Wall || grid[i][j] instanceof EmptySpace) {
+//                    // Food, Wall, or EmptySpace logic (no change needed)
+//                    // These entities don't move, so no need to update their positions in the grid
+//                }
+//            }
+//        }
+//    }
+
     private void updateGrid() {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] instanceof Bug) {
-                    Bug bug = (Bug) grid[i][j];
+                if (grid[i][j] instanceof Bug bug) {
                     Point newCoords = bug.getCoords();
                     if (newCoords == null) { // Check if coordinates are null
                         // Initialize bug coordinates if they are null
                         bug.setCoords(new Point(j, i)); // Assuming (x, y) convention
                         bug.setDirection(Direction.NORTH);
                         newCoords = bug.getCoords(); // Update newCoords
+                    } else {
+                        // Clear the old position of the bug in the grid
+                        grid[i][j] = null;
                     }
                     System.out.println("New Coords for bug " + bug + ": " + newCoords);
                     grid[newCoords.y][newCoords.x] = bug;
@@ -109,25 +133,6 @@ public class Battleground {
         }
     }
 
-//    private void updateGrid() {
-//        for (int i = 0; i < grid.length; i++) {
-//            for (int j = 0; j < grid[i].length; j++) {
-//                if (grid[i][j] instanceof Bug) { // Check if the grid cell contains a Bug
-//                    Bug bug = (Bug) grid[i][j]; // Cast the entity to Bug
-//                    if (bug.isMoved()) { // Check if the bug has moved in this tick
-//                        Point newCoords = bug.getCoords(); // Get the new coordinates of the bug
-//                        if (newCoords != null) { // Check if the new coordinates are valid
-//                            grid[newCoords.y][newCoords.x] = bug; // Update the grid with the bug's new position
-//                            grid[i][j] = null; // Clear the previous grid cell occupied by the bug
-//                        } else {
-//                            System.out.println("Bug's coordinates are null."); // Print a message if the bug's coordinates are null
-//                        }
-//                        bug.setMoved(false); // Reset the moved flag after updating the grid
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private void init() {
         actions.put(0, bug -> noop(bug));

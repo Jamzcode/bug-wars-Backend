@@ -72,19 +72,18 @@ public class Bug implements Entity {
         commands.put(33, this::ifEmpty);
         commands.put(34, this::ifWall);
         commands.put(35, this::_goto);
-        System.out.println("Commands: " + commands);
     }
 
     public int determineAction(Entity frontEntity, Script script) {
         int result = -1;
-        System.out.println("Script: " + script);
+        //System.out.println("Script: " + script);
         userBytecode  = script.getBytecode(); //changed int[] to userBytecode that was instantiated at the top
 
         loadCommands(); //loaded commands into commands
 
         for (int i = 0; i < userBytecode.length; i++) {
             if (commands.containsKey(userBytecode[i])) { //loading commands allows us to compare the userBytecode to the commands
-                System.out.println("userBytecode: " + userBytecode[i]);
+                //System.out.println("userBytecode: " + userBytecode[i]);
                 Command command = commands.get(userBytecode[i]);
                 boolean success = command.execute(frontEntity); //not really sure what this does
 

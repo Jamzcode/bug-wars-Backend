@@ -33,7 +33,7 @@ public class TurnOrderCalculator {
                         double distance = calculateDistance(bug.getCoords());
                         distanceBuckets.computeIfAbsent(distance, k -> new ArrayList<>()).add(bug);
                     } else {
-                        System.out.println("Bug coordinates are: " + bug.getCoords());
+                        System.out.println(bug + " coordinates are null ");
                     }
                 }
             }

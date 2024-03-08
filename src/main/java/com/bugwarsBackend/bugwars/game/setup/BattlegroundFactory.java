@@ -77,12 +77,12 @@ public class BattlegroundFactory {
 
     public Battleground create() {
         Battleground battleground = new Battleground("Map", grid, null); // Assuming the last argument should be null
-//        for (int i = 0; i < battleground.getGrid().length; i++) {
-//            for (int j = 0; j < battleground.getGrid()[i].length; j++) {
-//                System.out.print(battleground.getGrid()[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
+        for (int i = 0; i < battleground.getGrid().length; i++) {
+            for (int j = 0; j < battleground.getGrid()[i].length; j++) {
+                System.out.print(battleground.getGrid()[i][j] + " ");
+            }
+            System.out.println();
+        }
         return battleground;
     }
 }
