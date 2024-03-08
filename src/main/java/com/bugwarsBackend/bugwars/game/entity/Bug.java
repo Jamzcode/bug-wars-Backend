@@ -3,6 +3,7 @@ package com.bugwarsBackend.bugwars.game.entity;
 import com.bugwarsBackend.bugwars.model.Script;
 import com.bugwarsBackend.bugwars.service.ScriptService;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;
@@ -14,6 +15,7 @@ public class Bug implements Entity {
     private final Map<Integer, Command> commands = new HashMap<>();
     private int swarm;
     private Point coords;
+    @Getter
     private Direction direction;
     private int[] userBytecode;
     private int index = 0;
@@ -56,10 +58,6 @@ public class Bug implements Entity {
     }
 
 
-    public Direction getDirection() {
-        return direction;
-    }
-
     public Bug(int bugType, int[] userBytecode) {
         this.bugType = bugType;
         this.coords = new Point();
@@ -77,62 +75,62 @@ public class Bug implements Entity {
         System.out.println("Commands: " + commands);
     }
 
-//    public int determineAction(Entity frontEntity, Script script) {
-//        int result = -1;
-//        System.out.println("Script: " + script);
-//        userBytecode  = script.getBytecode(); //changed int[] to userBytecode that was instantiated at the top
-//
-//        loadCommands(); //loaded commands into commands
-//
-//        for (int i = 0; i < userBytecode.length; i++) {
-//            if (commands.containsKey(userBytecode[i])) { //loading commands allows us to compare the userBytecode to the commands
-//                System.out.println("userBytecode: " + userBytecode[i]);
-//                Command command = commands.get(userBytecode[i]);
-//                boolean success = command.execute(frontEntity); //not really sure what this does
-//
-//                if (success) {
-//                    index = userBytecode[i + 1];
-//                } else {
-//                    incrementIndex(2);
-//                }
-//            } else {
-//                result = userBytecode[i];
-//                incrementIndex(1); // Moved incrementIndex back here
-//            }
-//        }
-//        return result;
-//    }
-
     public int determineAction(Entity frontEntity, Script script) {
         int result = -1;
         System.out.println("Script: " + script);
-        userBytecode = script.getBytecode();
+        userBytecode  = script.getBytecode(); //changed int[] to userBytecode that was instantiated at the top
 
-        loadCommands();
+        loadCommands(); //loaded commands into commands
 
         for (int i = 0; i < userBytecode.length; i++) {
-            if (commands.containsKey(userBytecode[i])) {
+            if (commands.containsKey(userBytecode[i])) { //loading commands allows us to compare the userBytecode to the commands
+                System.out.println("userBytecode: " + userBytecode[i]);
                 Command command = commands.get(userBytecode[i]);
-                boolean success = command.execute(frontEntity);
+                boolean success = command.execute(frontEntity); //not really sure what this does
 
                 if (success) {
-                    if (userBytecode[i] == 0) { // If the command is a NOOP, increment index by 1
-                        incrementIndex(1);
-                    } else if (userBytecode[i] >= 10 && userBytecode[i] <= 14) { // If the command is a valid action
-                        incrementIndex(1); // Increment index by 1 to skip the next bytecode, assuming it represents the parameter for the action
-                    } else {
-                        throw new RuntimeException("Invalid action: " + userBytecode[i]);
-                    }
+                    index = userBytecode[i + 1];
                 } else {
-                    incrementIndex(2); // Increment index by 2 if the command execution fails
+                    incrementIndex(2);
                 }
             } else {
-                result = userBytecode[i]; // Set the result to the current bytecode if it's not a recognized command
-                incrementIndex(1);
+                result = userBytecode[i];
+                incrementIndex(1); // Moved incrementIndex back here
             }
         }
         return result;
     }
+
+//    public int determineAction(Entity frontEntity, Script script) {
+//        int result = -1;
+//        System.out.println("Script: " + script);
+//        userBytecode = script.getBytecode();
+//
+//        loadCommands();
+//
+//        for (int i = 0; i < userBytecode.length; i++) {
+//            if (commands.containsKey(userBytecode[i])) {
+//                Command command = commands.get(userBytecode[i]);
+//                boolean success = command.execute(frontEntity);
+//
+//                if (success) {
+//                    if (userBytecode[i] == 0) { // If the command is a NOOP, increment index by 1
+//                        incrementIndex(1);
+//                    } else if (userBytecode[i] >= 10 && userBytecode[i] <= 14) { // If the command is a valid action
+//                        incrementIndex(1); // Increment index by 1 to skip the next bytecode, assuming it represents the parameter for the action
+//                    } else {
+//                        throw new RuntimeException("Invalid action: " + userBytecode[i]);
+//                    }
+//                } else {
+//                    incrementIndex(2); // Increment index by 2 if the command execution fails
+//                }
+//            } else {
+//                result = userBytecode[i]; // Set the result to the current bytecode if it's not a recognized command
+//                incrementIndex(1);
+//            }
+//        }
+//        return result;
+//    }
 
 
     private void incrementIndex(int increment) {
@@ -220,10 +218,10 @@ private boolean _goto(Entity frontEntity) {
 
         if (swarm == 0) {
             color = "\033[0;34m"; // blue
-            bugTypeString = "A";
+            bugTypeString = "0";
         } else if (swarm == 1) {
             color = "\033[0;31m"; // red
-            bugTypeString = "B";
+            bugTypeString = "1";
         } else {
             throw new IllegalStateException("Unexpected value: " + swarm);
         }

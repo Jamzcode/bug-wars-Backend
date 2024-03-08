@@ -34,8 +34,9 @@ public class GameService {
         // Retrieve user from the database
         Optional<User> user = userRepository.findByUsername(principal.getName());
         System.out.println("User" + principal.getName());
-        if (user == null) {
+        if (user.isEmpty()) {
             // Handle case where user is not found
+            System.out.println("User not found");
             return;
         }
 
@@ -54,7 +55,7 @@ public class GameService {
         battleground.print();
 
         // Simulate ticks and print after each tick
-        int[] dummyTicks = new int[10];
+        int[] dummyTicks = new int[MAX_TICKS]; //Setting 50 ticks for testing
         for (int i = 0; i < dummyTicks.length; i++) {
             TickSummary tickSummary = battleground.nextTick(userSelectScript);
             System.out.println("Tick: " + (i + 1));
