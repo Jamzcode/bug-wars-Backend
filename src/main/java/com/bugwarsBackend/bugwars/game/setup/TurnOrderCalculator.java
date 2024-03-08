@@ -21,7 +21,8 @@ public class TurnOrderCalculator {
     public List<Bug> calculateTurnOrder() {
         Map<Double, List<Bug>> distanceBuckets = groupBugsByDistance();
         List<Bug> roughOrder = findPairs(distanceBuckets);
-        return sortTurnOrder(roughOrder);
+        return roughOrder;
+        //return sortTurnOrder(roughOrder);
     }
 
     private Map<Double, List<Bug>> groupBugsByDistance() {

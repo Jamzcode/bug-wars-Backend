@@ -21,6 +21,7 @@ public class Battleground {
     private String name;
     private Entity[][] grid;
     private final Map<Integer, Action> actions = new HashMap<>();
+    private List<Bug> turnOrder;
 
     private final List<Integer> actionsToBeTaken = new ArrayList<>();
     //List of Action Codes - 0, 31, 0, 29
@@ -40,6 +41,8 @@ public class Battleground {
         init();
         updateGrid();
     }
+
+
 
     public void print() {
         for (Entity[] entities : grid) {

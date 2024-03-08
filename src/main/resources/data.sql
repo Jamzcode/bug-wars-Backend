@@ -27,5 +27,9 @@ VALUES
     ((SELECT id FROM users WHERE username = 'test'), 'Spider Strike',
     'mov eat eat  rotl :ifWall mov mov :ifAlly rotr mov :goto eat mov',
     '{10, 14, 14, 12, 34, 10, 10, 31, 11, 10, 35, 14, 10}',
-    true);
+    true),
+    ((SELECT id FROM users WHERE username = 'test'), 'test script',
+        'att att mov mov rotr :ifEnemy mov rotr rotr',
+        '{13, 13, 10, 10, 11, 30, 10, 11, 11}',
+        true);
 

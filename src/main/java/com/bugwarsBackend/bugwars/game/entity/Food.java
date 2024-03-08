@@ -14,6 +14,6 @@ public class Food implements Entity {
 
     @Override
     public String toString() {
-        return "F"; // Representation of food
+        return "\u001B[33mF\u001B[0m"; // ANSI orange color
     }
 }

@@ -161,19 +161,19 @@ public class Bug implements Entity {
     @Override
     public String toString() {
         String color;
+        String bugTypeString = "";
+
         if (swarm == 0) {
             color = "\033[0;34m"; // blue
+            bugTypeString = "A";
         } else if (swarm == 1) {
             color = "\033[0;31m"; // red
+            bugTypeString = "B";
         } else {
             throw new IllegalStateException("Unexpected value: " + swarm);
         }
 
-        String directionString = ""; // Set directionString to an empty string
-
-        String bugTypeString = (bugType == 0 || bugType == 1) ? String.valueOf(bugType) : ""; // Display bugType only if it's 0 or 1
-
-        return String.format("%s%s%s\033[0m", color, bugTypeString, "\033[0m");
+        return String.format("%s%s\033[0m", color, bugTypeString);
     }
 
     public String bugTeam() {

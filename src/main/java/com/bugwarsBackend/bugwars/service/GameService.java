@@ -26,6 +26,8 @@ public class GameService {
     @Autowired
     UserRepository userRepository;
 
+
+
     public static final int MAX_TICKS = 50;
 
     public void startGame(Long id, Principal principal) {
@@ -52,7 +54,7 @@ public class GameService {
         battleground.print();
 
         // Simulate ticks and print after each tick
-        int[] dummyTicks = {0};
+        int[] dummyTicks = new int[MAX_TICKS];
         for (int i = 0; i < dummyTicks.length; i++) {
             TickSummary tickSummary = battleground.nextTick(userSelectScript);
             System.out.println("Tick: " + (i + 1));
