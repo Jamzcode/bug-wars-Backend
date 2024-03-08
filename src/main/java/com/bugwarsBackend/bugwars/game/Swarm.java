@@ -11,3 +11,4 @@ public class Swarm {
     private int[] bytecode;
     private int bugType;
 }
+

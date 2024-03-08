@@ -8,10 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.awt.Point;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -58,10 +55,16 @@ public class Battleground {
     }
 
     public TickSummary nextTick(Script script) {
+        int[] bytecode = script.getBytecode();
+        Swarm swarm0 = new Swarm("0", "test", bytecode, 0);
+        Swarm swarm1 = new Swarm("1", "test", bytecode, 1);;
+        List<Swarm> swarms = Arrays.asList(swarm0, swarm1);
+
         // Calculate turn order
-        TurnOrderCalculator turnOrderCalculator = new TurnOrderCalculator(grid, null); // You might need to pass swarms if required
+        TurnOrderCalculator turnOrderCalculator = new TurnOrderCalculator(grid, swarms); // You might need to pass swarms if required
         List<Bug> turnOrder = turnOrderCalculator.calculateTurnOrder();
         System.out.print("Turn order: " + turnOrder);
+        System.out.println("Turn order size: " + turnOrder.size());
 
         // Execute actions in the turn order
         List<ActionSummary> actionsTaken = new ArrayList<>();
@@ -84,27 +87,48 @@ public class Battleground {
     }
 
 
+//    private void updateGrid() {
+//        for (int i = 0; i < grid.length; i++) {
+//            for (int j = 0; j < grid[i].length; j++) {
+//                if (grid[i][j] instanceof Bug) {
+//                    Bug bug = (Bug) grid[i][j];
+//                    Point newCoords = bug.getCoords();
+//                    if (newCoords == null) { // Check if coordinates are null
+//                        // Initialize bug coordinates if they are null
+//                        bug.setCoords(new Point(j, i)); // Assuming (x, y) convention
+//                        bug.setDirection(Direction.NORTH);
+//                        newCoords = bug.getCoords(); // Update newCoords
+//                    }
+//                    System.out.println("New Coords: " + newCoords);
+//                    grid[newCoords.y][newCoords.x] = bug;
+//                } else if (grid[i][j] instanceof Food || grid[i][j] instanceof Wall || grid[i][j] instanceof EmptySpace) {
+//                    // Food, Wall, or EmptySpace logic (no change needed)
+//                    // These entities don't move, so no need to update their positions in the grid
+//                }
+//            }
+//        }
+//    }
+
     private void updateGrid() {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] instanceof Bug) {
-                    Bug bug = (Bug) grid[i][j];
-                    Point newCoords = bug.getCoords();
-                    if (newCoords == null) { // Check if coordinates are null
-                        // Initialize bug coordinates if they are null
-                        bug.setCoords(new Point(j, i)); // Assuming (x, y) convention
-                        bug.setDirection(Direction.NORTH);
-                        newCoords = bug.getCoords(); // Update newCoords
+                if (grid[i][j] instanceof Bug) { // Check if the grid cell contains a Bug
+                    Bug bug = (Bug) grid[i][j]; // Cast the entity to Bug
+                    if (bug.isMoved()) { // Check if the bug has moved in this tick
+                        Point newCoords = bug.getCoords(); // Get the new coordinates of the bug
+                        if (newCoords != null) { // Check if the new coordinates are valid
+                            grid[newCoords.y][newCoords.x] = bug; // Update the grid with the bug's new position
+                            grid[i][j] = null; // Clear the previous grid cell occupied by the bug
+                        } else {
+                            System.out.println("Bug's coordinates are null."); // Print a message if the bug's coordinates are null
+                        }
+                        bug.setMoved(false); // Reset the moved flag after updating the grid
                     }
-                    System.out.println("Coords: " + newCoords);
-                    grid[newCoords.y][newCoords.x] = bug;
-                } else if (grid[i][j] instanceof Food || grid[i][j] instanceof Wall || grid[i][j] instanceof EmptySpace) {
-                    // Food, Wall, or EmptySpace logic (no change needed)
-                    // These entities don't move, so no need to update their positions in the grid
                 }
             }
         }
     }
+
     private void init() {
         actions.put(0, bug -> noop(bug));
         actions.put(10, bug -> mov(bug));
@@ -121,16 +145,20 @@ public class Battleground {
     private void mov(Bug bug) {
         Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
         Entity destination = getEntityAtCoords(bugFrontCoords);
-        if (destination != null) return;
+        if (destination != null) {
+            return;
+        }
 
         if (bugFrontCoords != null) {
             grid[bugFrontCoords.y][bugFrontCoords.x] = bug;
             grid[bug.getCoords().y][bug.getCoords().x] = null;
             bug.setCoords(bugFrontCoords);
+            bug.setMoved(true); // Set moved flag to true
         } else {
-            System.out.println("Bug front coordinates are null.");
+            //System.out.println("Bug front coordinates are null.");
         }
     }
+
 
     private void rotr(Bug bug) {
         bug.setDirection(bug.getDirection().turnRight());
@@ -209,7 +237,7 @@ public class Battleground {
 
         // Check if coordinates are within the bounds of the grid
         if (x >= 0 && x < grid[0].length && y >= 0 && y < grid.length) {
-            System.out.println("Coords: " + coords);
+            System.out.println("Valid Coords: " + coords);
             return grid[y][x];
         } else {
             System.out.println("Coordinates are out of bounds from getEntityAtCoords method.");

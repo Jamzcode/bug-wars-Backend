@@ -15,7 +15,7 @@ public class ActionSummary {
     }
 
     public Integer getSwarm() {
-        return null;
+        return action;
     }
 }
 

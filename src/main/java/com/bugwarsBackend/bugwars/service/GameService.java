@@ -41,12 +41,12 @@ public class GameService {
 
         // Retrieve scripts for the user
         List<Script> scripts = scriptRepository.getScriptsByUser(user.get());
-        System.out.println("Scripts: " + scripts);
+        //System.out.println("Scripts: " + scripts);
         Script userSelectScript = scripts.stream()
                 .filter(script -> script.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Script not found for id: " + id));
-        System.out.println("This is user's script" + userSelectScript);
+        //System.out.println("This is user's script" + userSelectScript);
         // Load battleground and print the initial state
         Resource mapResource = new ClassPathResource("maps/tunnel.txt");
         BattlegroundFactory battlegroundFactory = new BattlegroundFactory(mapResource);
@@ -54,7 +54,7 @@ public class GameService {
         battleground.print();
 
         // Simulate ticks and print after each tick
-        int[] dummyTicks = new int[MAX_TICKS];
+        int[] dummyTicks = new int[10];
         for (int i = 0; i < dummyTicks.length; i++) {
             TickSummary tickSummary = battleground.nextTick(userSelectScript);
             System.out.println("Tick: " + (i + 1));
