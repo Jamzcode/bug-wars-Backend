@@ -55,9 +55,11 @@ public class Battleground {
     }
 
     public TickSummary nextTick(Script script) {
-        int[] bytecode = script.getBytecode();
-        Swarm swarm0 = new Swarm("0", "test", bytecode, 0);
-        Swarm swarm1 = new Swarm("1", "test", bytecode, 1);;
+        int[] bytecode0 = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
+        int[] bytecode1 = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
+
+        Swarm swarm0 = new Swarm("0", "test", bytecode0, 0);
+        Swarm swarm1 = new Swarm("1", "test", bytecode1, 1);
         List<Swarm> swarms = Arrays.asList(swarm0, swarm1);
 
         // Calculate turn order
@@ -150,26 +152,23 @@ public class Battleground {
     private void mov(Bug bug) {
         Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
         Entity destination = getEntityAtCoords(bugFrontCoords);
-        if (destination != null) {
-            return;
-        }
 
-        if (bugFrontCoords != null) {
-            grid[bugFrontCoords.y][bugFrontCoords.x] = bug;
-            grid[bug.getCoords().y][bug.getCoords().x] = null;
-            bug.setCoords(bugFrontCoords);
-            bug.setMoved(true); // Set moved flag to true
-        } else {
-            //System.out.println("Bug front coordinates are null.");
-        }
+        grid[bugFrontCoords.y][bugFrontCoords.x] = bug;
+        grid[bug.getCoords().y][bug.getCoords().x] = null;
+        bug.setCoords(bugFrontCoords);
+
+        bug.setMoved(true); // Set moved flag to true regardless of movement success
     }
 
 
     private void rotr(Bug bug) {
-        bug.setDirection(bug.getDirection().turnRight());
+        Direction newDirection = bug.getDirection().turnRight();
+        bug.setDirection(newDirection);
     }
 
+
     private void rotl(Bug bug) {
+        Direction newDirection = bug.getDirection().turnLeft();
         bug.setDirection(bug.getDirection().turnLeft());
     }
 

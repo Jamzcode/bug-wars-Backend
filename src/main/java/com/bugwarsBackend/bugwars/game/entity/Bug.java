@@ -85,8 +85,8 @@ public class Bug implements Entity {
             if (commands.containsKey(userBytecode[i])) { //loading commands allows us to compare the userBytecode to the commands
                 //System.out.println("userBytecode: " + userBytecode[i]);
                 Command command = commands.get(userBytecode[i]);
-                boolean success = command.execute(frontEntity); //not really sure what this does
-
+                boolean success = command.execute(frontEntity); // still returning false
+                System.out.println("Success: " + success);
                 if (success) {
                     index = userBytecode[i + 1];
                 } else {
@@ -179,25 +179,25 @@ public class Bug implements Entity {
 //        return true;
 //    }
 
-private boolean _goto(Entity frontEntity) {
-    // Implement the logic for determining whether the bug should move to the specified location
-    // This method should return true if the bug should move, false otherwise
-    // You need to determine the conditions under which the bug should move based on your game's requirements
-    if (frontEntity instanceof Food) {
-        // Move to the location if it contains food
-        return true;
-    } else if (frontEntity instanceof Wall) {
-        // Do not move if the location contains a wall
-        return false;
-    } else if (frontEntity instanceof Bug) {
-        // Move to the location if it contains an enemy bug
-        Bug enemyBug = (Bug) frontEntity;
-        return enemyBug.getSwarm() != swarm;
-    } else {
-        // Move to the location by default if no specific condition is met
-        return true;
+    private boolean _goto(Entity frontEntity) {
+        // Implement the logic for determining whether the bug should move to the specified location
+        // This method should return true if the bug should move, false otherwise
+        // You need to determine the conditions under which the bug should move based on your game's requirements
+        if (frontEntity instanceof Food) {
+            // Move to the location if it contains food
+            return true;
+        } else if (frontEntity instanceof Wall) {
+            // Do not move if the location contains a wall
+            return false;
+        } else if (frontEntity instanceof Bug) {
+            // Move to the location if it contains an enemy bug
+            Bug enemyBug = (Bug) frontEntity;
+            return enemyBug.getSwarm() != swarm;
+        } else {
+            // Move to the location by default if no specific condition is met
+            return true;
+        }
     }
-}
 
 
     @Override
