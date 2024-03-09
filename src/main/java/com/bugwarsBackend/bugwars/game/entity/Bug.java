@@ -79,7 +79,7 @@ public class Bug implements Entity {
         //System.out.println("Script: " + script);
         userBytecode  = script.getBytecode(); //changed int[] to userBytecode that was instantiated at the top
 
-        loadCommands(); //loaded commands into commands
+        //loadCommands(); //loaded commands into commands
 
         for (int i = 0; i < userBytecode.length; i++) {
             if (commands.containsKey(userBytecode[i])) { //loading commands allows us to compare the userBytecode to the commands

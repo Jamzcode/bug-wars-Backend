@@ -55,30 +55,34 @@ public class Battleground {
     }
 
     public TickSummary nextTick(Script script) {
-        int[] bytecode0 = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
-        int[] bytecode1 = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
+//        int[] bytecode0 = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
+//        int[] bytecode1 = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
 
-        Swarm swarm0 = new Swarm("0", "test", bytecode0, 0);
-        Swarm swarm1 = new Swarm("1", "test", bytecode1, 1);
-        List<Swarm> swarms = Arrays.asList(swarm0, swarm1);
+        int[] bytecode = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
+//        Swarm swarm0 = new Swarm("0", "test", bytecode0, 0);
+//        Swarm swarm1 = new Swarm("1", "test", bytecode1, 1);
+        //List<Swarm> swarms = Arrays.asList(swarm0, swarm1);
 
         // Calculate turn order
-        TurnOrderCalculator turnOrderCalculator = new TurnOrderCalculator(grid, swarms); // You might need to pass swarms if required
+        TurnOrderCalculator turnOrderCalculator = new TurnOrderCalculator(grid, null); // You might need to pass swarms if required
         List<Bug> turnOrder = turnOrderCalculator.calculateTurnOrder();
         System.out.print("Turn order: " + turnOrder);
         System.out.println("Turn order size: " + turnOrder.size());
 
         // Execute actions in the turn order
         List<ActionSummary> actionsTaken = new ArrayList<>();
-        for (Bug bug : turnOrder) {
-            Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
-            System.out.println("Bug front coords: " + bugFrontCoords);
-            int action = bug.determineAction(getEntityAtCoords(bugFrontCoords), script);
-            System.out.println("Current action: " + action);
-            if (!actions.containsKey(action)) throw new RuntimeException("Invalid action: " + action);
+        for(int action : bytecode) {
+            for (Bug bug : turnOrder) {
+                Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
+                System.out.println("Bug front coords: " + bugFrontCoords);
 
-            actionsTaken.add(new ActionSummary(bug.getCoords(), action));
-            actions.get(action).run(bug);
+                //int action = bug.determineAction(getEntityAtCoords(bugFrontCoords), script);
+                System.out.println("Current action: " + action);
+                if (!actions.containsKey(action)) throw new RuntimeException("Invalid action: " + action);
+
+                actionsTaken.add(new ActionSummary(bug.getCoords(), action));
+                actions.get(action).run(bug);
+            }
         }
 
         updateGrid();
@@ -152,6 +156,8 @@ public class Battleground {
     private void mov(Bug bug) {
         Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
         Entity destination = getEntityAtCoords(bugFrontCoords);
+
+        //if (destination != null) return;
 
         grid[bugFrontCoords.y][bugFrontCoords.x] = bug;
         grid[bug.getCoords().y][bug.getCoords().x] = null;
