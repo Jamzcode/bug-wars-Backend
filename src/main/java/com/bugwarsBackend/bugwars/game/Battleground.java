@@ -16,8 +16,10 @@ import java.util.*;
 public class Battleground {
     private List<Bug> bugs;
     private String name;
+    private int swarm;
     private Entity[][] grid;
     private final Map<Integer, Action> actions = new HashMap<>();
+    private final Map<Integer, Command> commands = new HashMap<>();
     private List<Bug> turnOrder;
 
     private final List<Integer> actionsToBeTaken = new ArrayList<>();
@@ -36,6 +38,8 @@ public class Battleground {
         }
 
         init();
+        loadCommands();
+
         updateGrid();
     }
 
@@ -54,43 +58,101 @@ public class Battleground {
         }
     }
 
-    public TickSummary nextTick(Script script) {
-//        int[] bytecode0 = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
-//        int[] bytecode1 = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
+//    public TickSummary nextTick(Script script) {
+//
+//        int[] bytecode = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
+//        // Calculate turn order
+//        TurnOrderCalculator turnOrderCalculator = new TurnOrderCalculator(grid, null); // You might need to pass swarms if required
+//        List<Bug> turnOrder = turnOrderCalculator.calculateTurnOrder();
+//        System.out.print("Turn order: " + turnOrder);
+//        System.out.println("Turn order size: " + turnOrder.size());
+//
+//        // Execute actions in the turn order
+//        List<ActionSummary> actionsTaken = new ArrayList<>();
+//        for(int action : bytecode) {
+//            for (Bug bug : turnOrder) {
+//                commandsMap.putAll(bug.getCommands());
+//                Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
+//                System.out.println("Bug front coords: " + bugFrontCoords);
+//
+//                //int action = bug.determineAction(getEntityAtCoords(bugFrontCoords), script);
+//                System.out.println("Current action: " + action);
+//                if (!actions.containsKey(action)) {
+//                    if (commandsMap.containsKey(action)) {
+//                        commandsMap.get(action).run(bug);
+//                    } else {
+//                        throw new RuntimeException("Invalid command: " + action);
+//                    }
+//                }
+//
+//                actionsTaken.add(new ActionSummary(bug.getCoords(), action));
+//                actions.get(action).run(bug);
+//            }
+//        }
+//
+//        updateGrid();
+//
+//        print();
+//
+//        return new TickSummary(actionsTaken, lastSwarmStanding());
+//    }
 
+    public TickSummary nextTick(Script script) {
         int[] bytecode = Arrays.copyOf(script.getBytecode(), script.getBytecode().length);
-//        Swarm swarm0 = new Swarm("0", "test", bytecode0, 0);
-//        Swarm swarm1 = new Swarm("1", "test", bytecode1, 1);
-        //List<Swarm> swarms = Arrays.asList(swarm0, swarm1);
 
         // Calculate turn order
-        TurnOrderCalculator turnOrderCalculator = new TurnOrderCalculator(grid, null); // You might need to pass swarms if required
+        TurnOrderCalculator turnOrderCalculator = new TurnOrderCalculator(grid, null);
         List<Bug> turnOrder = turnOrderCalculator.calculateTurnOrder();
-        System.out.print("Turn order: " + turnOrder);
-        System.out.println("Turn order size: " + turnOrder.size());
 
         // Execute actions in the turn order
         List<ActionSummary> actionsTaken = new ArrayList<>();
-        for(int action : bytecode) {
+        for (int action : bytecode) {
             for (Bug bug : turnOrder) {
                 Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
                 System.out.println("Bug front coords: " + bugFrontCoords);
-
-                //int action = bug.determineAction(getEntityAtCoords(bugFrontCoords), script);
                 System.out.println("Current action: " + action);
-                if (!actions.containsKey(action)) throw new RuntimeException("Invalid action: " + action);
 
-                actionsTaken.add(new ActionSummary(bug.getCoords(), action));
-                actions.get(action).run(bug);
+                // Check if the action code is in the range 30-35
+                if (action >= 30 && action <= 35) {
+                    // Call the corresponding method in the Bug class based on the action code
+                    switch (action) {
+                        case 30:
+                            bug.ifEnemy(getEntityAtCoords(bugFrontCoords));
+                            break;
+                        case 31:
+                            bug.ifAlly(getEntityAtCoords(bugFrontCoords));
+                            break;
+                        case 32:
+                            bug.ifFood(getEntityAtCoords(bugFrontCoords));
+                            break;
+                        case 33:
+                            bug.ifEmpty(getEntityAtCoords(bugFrontCoords));
+                            break;
+                        case 34:
+                            bug.ifWall(getEntityAtCoords(bugFrontCoords));
+                            break;
+                        case 35:
+                            bug._goto(getEntityAtCoords(bugFrontCoords));
+                            break;
+                        default:
+                            throw new RuntimeException("Invalid command: " + action);
+                    }
+                    commands.get(action).execute(bug);
+                } else if(actions.containsKey(action)) {
+                    actionsTaken.add(new ActionSummary(bug.getCoords(), action));
+                    actions.get(action).run(bug);
+                } else {
+                            throw new RuntimeException("Invalid command: " + action);
+                }
             }
         }
 
         updateGrid();
-
         print();
 
         return new TickSummary(actionsTaken, lastSwarmStanding());
     }
+
 
 
 //    private void updateGrid() {
@@ -148,6 +210,9 @@ public class Battleground {
         actions.put(13, bug -> att(bug));
         actions.put(14, bug -> eat(bug));
     }
+
+
+
 //List of actions would be new ArrayList(0, 10, 11, 12, 13, 14)
     //for each action, use actionMap.get(action)
     private void noop(Bug bug) {
@@ -258,8 +323,77 @@ public class Battleground {
     private boolean lastSwarmStanding() {
         return bugs.stream().map(Bug::getSwarm).distinct().limit(2).count() <= 1;
     }
+
+
+    public void loadCommands() {
+        commands.put(30, this::ifEnemy);
+        commands.put(31, this::ifAlly);
+        commands.put(32, this::ifFood);
+        commands.put(33, this::ifEmpty);
+        commands.put(34, this::ifWall);
+        commands.put(35, this::_goto);
+    }
+
+    public boolean ifEnemy(Entity frontEntity) {
+        if (frontEntity instanceof Bug) {
+            Bug enemyBug = (Bug) frontEntity;
+            return enemyBug.getSwarm() != swarm;
+        }
+        return false;
+    }
+
+    public boolean ifAlly(Entity frontEntity) {
+        if (frontEntity instanceof Bug) {
+            Bug allyBug = (Bug) frontEntity;
+            return allyBug.getSwarm() == swarm;
+        }
+        return false;
+    }
+
+    public boolean ifFood(Entity frontEntity) {
+        return frontEntity instanceof Food;
+    }
+
+    public boolean ifEmpty(Entity frontEntity) {
+        return frontEntity == null;
+    }
+
+    public boolean ifWall(Entity frontEntity) {
+        return frontEntity instanceof Wall;
+    }
+
+//    private boolean _goto(Entity frontEntity) {
+//        return true;
+//    }
+
+    public boolean _goto(Entity frontEntity) {
+        // Implement the logic for determining whether the bug should move to the specified location
+        // This method should return true if the bug should move, false otherwise
+        // You need to determine the conditions under which the bug should move based on your game's requirements
+        if (frontEntity instanceof Food) {
+            // Move to the location if it contains food
+            return true;
+        } else if (frontEntity instanceof Wall) {
+            // Do not move if the location contains a wall
+            return false;
+        } else if (frontEntity instanceof Bug) {
+            // Move to the location if it contains an enemy bug
+            Bug enemyBug = (Bug) frontEntity;
+            return enemyBug.getSwarm() != swarm;
+        } else {
+            // Move to the location by default if no specific condition is met
+            return true;
+        }
+    }
+
+
     @FunctionalInterface
     interface Action {
         void run(Bug bug);
+    }
+
+    @FunctionalInterface
+    interface Command {
+        boolean execute(Entity frontEntity);
     }
 }

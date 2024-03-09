@@ -12,6 +12,7 @@ import java.util.Map;
 
 @Data
 public class Bug implements Entity {
+    @Getter
     private final Map<Integer, Command> commands = new HashMap<>();
     private int swarm;
     private Point coords;
@@ -33,7 +34,7 @@ public class Bug implements Entity {
         this.direction = direction;
         this.bugType = bugType;
 
-        loadCommands();
+        //loadCommands();
     }
 
     public Bug(int swarm, Point coords) {
@@ -65,14 +66,16 @@ public class Bug implements Entity {
         this.userBytecode = userBytecode;
     }
 
-    private void loadCommands() {
-        commands.put(30, this::ifEnemy);
-        commands.put(31, this::ifAlly);
-        commands.put(32, this::ifFood);
-        commands.put(33, this::ifEmpty);
-        commands.put(34, this::ifWall);
-        commands.put(35, this::_goto);
-    }
+//    public void loadCommands() {
+//        commands.put(30, this::ifEnemy);
+//        commands.put(31, this::ifAlly);
+//        commands.put(32, this::ifFood);
+//        commands.put(33, this::ifEmpty);
+//        commands.put(34, this::ifWall);
+//        commands.put(35, this::_goto);
+//    }
+
+
 
     public int determineAction(Entity frontEntity, Script script) {
         int result = -1;
@@ -147,57 +150,57 @@ public class Bug implements Entity {
         }
     }
 
-    private boolean ifEnemy(Entity frontEntity) {
-        if (frontEntity instanceof Bug) {
-            Bug enemyBug = (Bug) frontEntity;
-            return enemyBug.swarm != swarm;
-        }
-        return false;
-    }
-
-    private boolean ifAlly(Entity frontEntity) {
-        if (frontEntity instanceof Bug) {
-            Bug allyBug = (Bug) frontEntity;
-            return allyBug.swarm == swarm;
-        }
-        return false;
-    }
-
-    private boolean ifFood(Entity frontEntity) {
-        return frontEntity instanceof Food;
-    }
-
-    private boolean ifEmpty(Entity frontEntity) {
-        return frontEntity == null;
-    }
-
-    private boolean ifWall(Entity frontEntity) {
-        return frontEntity instanceof Wall;
-    }
-
-//    private boolean _goto(Entity frontEntity) {
-//        return true;
+//    public boolean ifEnemy(Entity frontEntity) {
+//        if (frontEntity instanceof Bug) {
+//            Bug enemyBug = (Bug) frontEntity;
+//            return enemyBug.swarm != swarm;
+//        }
+//        return false;
 //    }
-
-    private boolean _goto(Entity frontEntity) {
-        // Implement the logic for determining whether the bug should move to the specified location
-        // This method should return true if the bug should move, false otherwise
-        // You need to determine the conditions under which the bug should move based on your game's requirements
-        if (frontEntity instanceof Food) {
-            // Move to the location if it contains food
-            return true;
-        } else if (frontEntity instanceof Wall) {
-            // Do not move if the location contains a wall
-            return false;
-        } else if (frontEntity instanceof Bug) {
-            // Move to the location if it contains an enemy bug
-            Bug enemyBug = (Bug) frontEntity;
-            return enemyBug.getSwarm() != swarm;
-        } else {
-            // Move to the location by default if no specific condition is met
-            return true;
-        }
-    }
+//
+//    public boolean ifAlly(Entity frontEntity) {
+//        if (frontEntity instanceof Bug) {
+//            Bug allyBug = (Bug) frontEntity;
+//            return allyBug.swarm == swarm;
+//        }
+//        return false;
+//    }
+//
+//    public boolean ifFood(Entity frontEntity) {
+//        return frontEntity instanceof Food;
+//    }
+//
+//    public boolean ifEmpty(Entity frontEntity) {
+//        return frontEntity == null;
+//    }
+//
+//    public boolean ifWall(Entity frontEntity) {
+//        return frontEntity instanceof Wall;
+//    }
+//
+////    private boolean _goto(Entity frontEntity) {
+////        return true;
+////    }
+//
+//    public boolean _goto(Entity frontEntity) {
+//        // Implement the logic for determining whether the bug should move to the specified location
+//        // This method should return true if the bug should move, false otherwise
+//        // You need to determine the conditions under which the bug should move based on your game's requirements
+//        if (frontEntity instanceof Food) {
+//            // Move to the location if it contains food
+//            return true;
+//        } else if (frontEntity instanceof Wall) {
+//            // Do not move if the location contains a wall
+//            return false;
+//        } else if (frontEntity instanceof Bug) {
+//            // Move to the location if it contains an enemy bug
+//            Bug enemyBug = (Bug) frontEntity;
+//            return enemyBug.getSwarm() != swarm;
+//        } else {
+//            // Move to the location by default if no specific condition is met
+//            return true;
+//        }
+//    }
 
 
     @Override
@@ -237,4 +240,6 @@ public class Bug implements Entity {
     interface Command {
         boolean execute(Entity frontEntity);
     }
+
+
 }
