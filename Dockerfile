@@ -3,6 +3,6 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 FROM openjdk:17.0.1-jdk-slim
-COPY --from=build /target/bugwars-0.0.1-SNAPSHOT.jar bugwars.jar
+COPY --from=build /target/bug-wars-0.0.1-SNAPSHOT.jar bugwars.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "bugwars.jar"]
