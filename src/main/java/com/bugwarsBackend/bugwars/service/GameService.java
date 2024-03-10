@@ -26,8 +26,6 @@ public class GameService {
     @Autowired
     UserRepository userRepository;
 
-
-
     public static final int MAX_TICKS = 50;
 
     public void startGame(Long id, Principal principal) {

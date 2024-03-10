@@ -36,10 +36,10 @@ public enum Direction {
 
     public Point goForward(Point coords) {
         return switch (this) {
-            case NORTH -> new Point(coords.x, coords.y - 1);
-            case EAST -> new Point(coords.x + 1, coords.y);
-            case SOUTH -> new Point(coords.x, coords.y + 1);
-            case WEST -> new Point(coords.x - 1, coords.y);
+            case NORTH -> new Point(coords.x, coords.y - 1); // Move up (decrease y)
+            case EAST -> new Point(coords.x + 1, coords.y); // Move right (increase x)
+            case SOUTH -> new Point(coords.x, coords.y + 1); // Move down (increase y)
+            case WEST -> new Point(coords.x - 1, coords.y); // Move left (decrease x)
         };
     }
 }

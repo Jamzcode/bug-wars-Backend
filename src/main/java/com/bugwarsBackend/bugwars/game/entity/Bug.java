@@ -150,58 +150,57 @@ public class Bug implements Entity {
         }
     }
 
-//    public boolean ifEnemy(Entity frontEntity) {
-//        if (frontEntity instanceof Bug) {
-//            Bug enemyBug = (Bug) frontEntity;
-//            return enemyBug.swarm != swarm;
-//        }
-//        return false;
-//    }
-//
-//    public boolean ifAlly(Entity frontEntity) {
-//        if (frontEntity instanceof Bug) {
-//            Bug allyBug = (Bug) frontEntity;
-//            return allyBug.swarm == swarm;
-//        }
-//        return false;
-//    }
-//
-//    public boolean ifFood(Entity frontEntity) {
-//        return frontEntity instanceof Food;
-//    }
-//
-//    public boolean ifEmpty(Entity frontEntity) {
-//        return frontEntity == null;
-//    }
-//
-//    public boolean ifWall(Entity frontEntity) {
-//        return frontEntity instanceof Wall;
-//    }
-//
-////    private boolean _goto(Entity frontEntity) {
-////        return true;
-////    }
-//
-//    public boolean _goto(Entity frontEntity) {
-//        // Implement the logic for determining whether the bug should move to the specified location
-//        // This method should return true if the bug should move, false otherwise
-//        // You need to determine the conditions under which the bug should move based on your game's requirements
-//        if (frontEntity instanceof Food) {
-//            // Move to the location if it contains food
-//            return true;
-//        } else if (frontEntity instanceof Wall) {
-//            // Do not move if the location contains a wall
-//            return false;
-//        } else if (frontEntity instanceof Bug) {
-//            // Move to the location if it contains an enemy bug
-//            Bug enemyBug = (Bug) frontEntity;
-//            return enemyBug.getSwarm() != swarm;
-//        } else {
-//            // Move to the location by default if no specific condition is met
-//            return true;
-//        }
+    public boolean ifEnemy(Entity frontEntity) {
+        if (frontEntity instanceof Bug) {
+            Bug enemyBug = (Bug) frontEntity;
+            return enemyBug.swarm != swarm;
+        }
+        return false;
+    }
+
+    public boolean ifAlly(Entity frontEntity) {
+        if (frontEntity instanceof Bug) {
+            Bug allyBug = (Bug) frontEntity;
+            return allyBug.swarm == swarm;
+        }
+        return false;
+    }
+
+    public boolean ifFood(Entity frontEntity) {
+        return frontEntity instanceof Food;
+    }
+
+    public boolean ifEmpty(Entity frontEntity) {
+        return frontEntity == null;
+    }
+
+    public boolean ifWall(Entity frontEntity) {
+        return frontEntity instanceof Wall;
+    }
+
+//    private boolean _goto(Entity frontEntity) {
+//        return true;
 //    }
 
+    public boolean _goto(Entity frontEntity) {
+        // Implement the logic for determining whether the bug should move to the specified location
+        // This method should return true if the bug should move, false otherwise
+        // You need to determine the conditions under which the bug should move based on your game's requirements
+        if (frontEntity instanceof Food) {
+            // Move to the location if it contains food
+            return true;
+        } else if (frontEntity instanceof Wall) {
+            // Do not move if the location contains a wall
+            return false;
+        } else if (frontEntity instanceof Bug) {
+            // Move to the location if it contains an enemy bug
+            Bug enemyBug = (Bug) frontEntity;
+            return enemyBug.getSwarm() != swarm;
+        } else {
+            // Move to the location by default if no specific condition is met
+            return true;
+        }
+    }
 
     @Override
     public Point getPosition() {
@@ -220,10 +219,10 @@ public class Bug implements Entity {
 
         if (swarm == 0) {
             color = "\033[0;34m"; // blue
-            bugTypeString = "0";
+            bugTypeString = "^";
         } else if (swarm == 1) {
             color = "\033[0;31m"; // red
-            bugTypeString = "1";
+            bugTypeString = "v";
         } else {
             throw new IllegalStateException("Unexpected value: " + swarm);
         }
