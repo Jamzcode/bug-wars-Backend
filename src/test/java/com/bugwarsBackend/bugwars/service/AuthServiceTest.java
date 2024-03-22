@@ -127,9 +127,10 @@ public class AuthServiceTest {
         UserDetails userDetails = new UserDetailsImpl
                 ((long) 1, "username", "password", authorities);
         when(authenticationManager.authenticate(any())).thenReturn(authentication);
-        when(userDetailsService.loadUserByUsername(request.getUsername())).thenReturn(userDetails);
+        when(authentication.getPrincipal()).thenReturn(userDetails);
         when(jwtUtils.generateJwtToken(authentication)).thenReturn("jwtToken");
-
+        RefreshToken refreshToken = new RefreshToken();
+        when(refreshTokenService.createRefreshToken(anyLong())).thenReturn(refreshToken);
         JwtResponse jwtResponse = authService.authenticateUser(request);
 
         assertNotNull(jwtResponse);
