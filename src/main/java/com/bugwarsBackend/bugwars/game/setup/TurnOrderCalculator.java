@@ -56,9 +56,9 @@ public class TurnOrderCalculator {
                             Bug bug2 = bugs.get(j);
                             if (!roughOrder.contains(bug2) && areAligned(bug1, bug2)) {
                                 roughOrder.add(bug1);
-                                System.out.println("Added bug1: " + bug1);
+                                //System.out.println("Added bug1: " + bug1);
                                 roughOrder.add(bug2);
-                                System.out.println("Added bug2: " + bug2);
+                                //System.out.println("Added bug2: " + bug2);
                                 break;
                             }
                         }

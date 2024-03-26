@@ -3,19 +3,19 @@ XXXXXXXXXXXXXXXXXXXXX
 X                   X
 X XXXXXXXXXXXXXXXXX X
 X X               X X
-X X                 X
-X X  1         1  XXX
-X X                 X
-X X                 X
-X X      XX         X
+X X               X X
+X X  1         1  X X
+X X               X X
+X X               X X
+X X      XX       X X
 X X    FFFFFF     X X
 X X   FFFFFFFF    X X
 X X    FFFFFF     X X
 X X      XX       X X
-X X                 X
-X X                 X
-X X  0         0  XXX
-X X                 X
+X X               X X
+X X               X X
+X X  0         0  X X
+X X               X X
 X X               X X
 X XXXXXXXXXXXXXXXXX X
 X                   X

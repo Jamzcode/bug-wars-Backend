@@ -31,7 +31,7 @@ public class GameService {
     public void startGame(Long id, Principal principal) {
         // Retrieve user from the database
         Optional<User> user = userRepository.findByUsername(principal.getName());
-        System.out.println("User" + principal.getName());
+        //System.out.println("User" + principal.getName());
         if (user.isEmpty()) {
             // Handle case where user is not found
             System.out.println("User not found");
@@ -39,25 +39,31 @@ public class GameService {
         }
 
         // Retrieve scripts for the user
-        List<Script> scripts = scriptRepository.getScriptsByUser(user.get());
+//        List<Script> scripts = scriptRepository.getScriptsByUser(user.get());
         //System.out.println("Scripts: " + scripts);
-        Script userSelectScript = scripts.stream()
-                .filter(script -> script.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Script not found for id: " + id));
+//        Script userSelectScript = scripts.stream()
+//                .filter(script -> script.getId().equals(id))
+//                .findFirst()
+//                .orElseThrow(() -> new IllegalArgumentException("Script not found for id: " + id));
         //System.out.println("This is user's script" + userSelectScript);
+
+        Script userSelectScript = scriptRepository.findById(id).get();
+        if (userSelectScript.getId() == null) {
+            System.out.println("Script not found for id: " + id);
+            throw new IllegalArgumentException("Script not found for id: " + id);
+        }
         // Load battleground and print the initial state
         Resource mapResource = new ClassPathResource("maps/tunnel.txt");
         BattlegroundFactory battlegroundFactory = new BattlegroundFactory(mapResource);
         Battleground battleground = battlegroundFactory.create();
-        battleground.print();
+        //battleground.print();
 
         // Simulate ticks and print after each tick
-        int[] dummyTicks = new int[MAX_TICKS]; //Setting 50 ticks for testing
+        int[] dummyTicks = new int[1]; //Setting 50 ticks for testing
         for (int i = 0; i < dummyTicks.length; i++) {
             TickSummary tickSummary = battleground.nextTick(userSelectScript);
-            System.out.println("Tick: " + (i + 1));
-            battleground.print();
+            //System.out.println("Tick: " + (i + 1));
+            //battleground.print();
             if (tickSummary.isGameOver()) {
                 System.out.println("Game over!");
                 break;

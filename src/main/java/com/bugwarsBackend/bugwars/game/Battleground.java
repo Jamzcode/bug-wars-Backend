@@ -45,18 +45,18 @@ public class Battleground {
 
 
 
-    public void print() {
-        for (Entity[] entities : grid) {
-            for (Entity entity : entities) {
-                if (entity == null) {
-                    System.out.print(" ");
-                } else {
-                    System.out.print(entity);
-                }
-            }
-            System.out.println();
-        }
-    }
+//    public void print() {
+//        for (Entity[] entities : grid) {
+//            for (Entity entity : entities) {
+//                if (entity == null) {
+//                    System.out.print(" ");
+//                } else {
+//                    System.out.print(entity);
+//                }
+//            }
+//            System.out.println();
+//        }
+//    }
 
 //    public TickSummary nextTick(Script script) {
 //
@@ -109,8 +109,8 @@ public class Battleground {
         for (int action : bytecode) {
             for (Bug bug : turnOrder) {
                 Point bugFrontCoords = bug.getDirection().goForward(bug.getCoords());
-                System.out.println("Bug front coords: " + bugFrontCoords);
-                System.out.println("Current action: " + action);
+                //System.out.println("Bug front coords: " + bugFrontCoords);
+                //System.out.println("Current action: " + action);
 
                 // Check if the action code is in the range 30-35
                 if (action >= 30 && action <= 35) {
@@ -149,7 +149,7 @@ public class Battleground {
             updateGrid();
         }
 
-        print();
+        //print();
 
         return new TickSummary(actionsTaken, lastSwarmStanding());
     }
@@ -170,7 +170,7 @@ public class Battleground {
                         // Clear the old position of the bug in the grid
                         grid[i][j] = null;
                     }
-                    System.out.println("New Coords for bug " + bug + ": " + newCoords);
+                    //System.out.println("New Coords for bug " + bug + ": " + newCoords);
                     grid[newCoords.y][newCoords.x] = bug; // Corrected coordinates assignment
                 } else if (grid[i][j] instanceof Food || grid[i][j] instanceof Wall || grid[i][j] instanceof EmptySpace) {
                 }
@@ -212,14 +212,14 @@ public class Battleground {
 
     private void rotr(Bug bug) {
         // Before rotation
-        System.out.println("Before rotr: " + bug.getDirection());
+        //System.out.println("Before rotr: " + bug.getDirection());
 
         // Perform rotation
         Direction newDirection = bug.getDirection().turnRight();
         bug.setDirection(newDirection);
 
         // After rotation
-        System.out.println("After rotr: " + bug.getDirection());
+        //System.out.println("After rotr: " + bug.getDirection());
     }
 
     private void rotl(Bug bug) {
@@ -296,7 +296,7 @@ public class Battleground {
 
         // Check if coordinates are within the bounds of the grid
         if (x >= 0 && x < grid[0].length && y >= 0 && y < grid.length) {
-            System.out.println("Valid Coords: " + coords);
+            //System.out.println("Valid Coords: " + coords);
             return grid[y][x];
         } else {
             System.out.println("Coordinates are out of bounds from getEntityAtCoords method.");
