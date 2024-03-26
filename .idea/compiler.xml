@@ -9,7 +9,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="demo" />
         <module name="bugwars" />
-        <module name="bug-wars-Backend" />
       </profile>
     </annotationProcessing>
   </component>

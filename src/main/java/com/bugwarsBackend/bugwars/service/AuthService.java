@@ -108,4 +108,5 @@ public class AuthService {
         User user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
         refreshTokenService.deleteByUserId(user.getId());
     }
+
 }
